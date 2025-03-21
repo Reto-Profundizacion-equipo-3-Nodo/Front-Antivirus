@@ -1,10 +1,11 @@
 import { Link } from "@remix-run/react";
 
+
 export default function Navbar() {
   return (
     <nav className="bg-gradient-to-b from-[#283E51] to-[#4B79A1] dark:bg-[#172a41] text-white py-2 px-10 flex justify-between items-center relative">
       <div className="h-16 flex items-center pl-4">
-        <img src="public/logo.png" alt="Logo" className="max-h-20 w-auto object-contain"/>
+        <img src="/images/logo.png" alt="Logo" className="max-h-20 w-auto object-contain"/>
       </div>
 
       {/* Menú en pantallas grandes */}
