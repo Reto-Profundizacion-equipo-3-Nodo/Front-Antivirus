@@ -21,7 +21,8 @@
     "@tailwindcss/typography": "^0.5.16",
     "isbot": "^4.1.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-icons": "^5.5.0"
   },
   "devDependencies": {
     "@remix-run/dev": "^2.16.1",
