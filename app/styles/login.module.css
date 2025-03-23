@@ -1,0 +1,52 @@
+.bgLogin {
+    background-image: url("/Images/Background.webp");
+    background-size: cover;
+    background-position: center;
+  }
+  
+  
+/* Campos de entrada */
+input[type="email"], input[type="password"] {
+    width: 100%;
+    padding: 12px 15px 12px 40px; /* Espacio para los íconos */
+    border: 1px solid #708BC6; /* Color de borde de la paleta */
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.7);
+    font-size: 16px;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+/* Efecto al hacer focus en los inputs */
+input[type="email"]:focus, input[type="password"]:focus {
+    border-color: #32526E; /* Azul más oscuro al enfocar */
+    box-shadow: 0 0 8px rgba(50, 82, 110, 0.5);
+}
+
+/* Íconos dentro de los inputs */
+.input-container {
+    position: relative;
+    margin-bottom: 15px;
+}
+.input-container i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #32526E;
+}
+
+/* Botones de login */
+.btn-google, .btn-facebook {
+    background: #FFBA08; /* Mantener color original */
+    color: #222D56;
+    padding: 12px;
+    border-radius: 6px;
+    font-weight: bold;
+    transition: background 0.3s;
+    cursor: pointer;
+}
+
+.btn-google:hover, .btn-facebook:hover {
+    background: #E0A007; /* Oscurecer en hover */
+}
