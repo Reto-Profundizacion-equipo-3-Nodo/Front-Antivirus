@@ -9,6 +9,7 @@ declare module "@remix-run/node" {
 }
 
 export default defineConfig({
+  publicDir: "public",
   plugins: [
     remix({
       future: {

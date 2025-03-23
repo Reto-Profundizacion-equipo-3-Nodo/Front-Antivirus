@@ -1,62 +1,91 @@
-/*import logo from "../assets/images/logo.png";
-import iconFacebook from "../assets/icons/iconFacebook.svg";
-import iconLinkedin from "../assets/icons/iconLinkedin.svg";
-import iconIg from "../assets/icons/iconIg.svg";
-import iconEmail from "../assets/icons/iconEmail.svg";
-import iconTel from "../assets/icons/iconTel.svg";
-import iconWhatsapp from "../assets/icons/iconWhatswapp.svg";
+import { Instagram, Linkedin, Youtube, Facebook } from "lucide-react";
 
-const Footer = () => {
+export default function Footer() {
   return (
-    <div className="bg-[#1B1550]">
-      <div className="flex">
-        <div className="py-5 relative w-3/12">
-          <div className="absolute bg-black w-full h-full top-0 left-0 bg-[linear-gradient(76.87deg,#1D1856_30.7%,#5A4995_153.04%)] z-0"></div>
-          <div className="z-10 relative flex justify-center">
-            <img className="w-72" src={logo} alt="logo antivirus" />
-          </div>
-          <div className="text-white text text-center z-10 relative space-y-5">
-            <p>También puedes encontrarnos en:</p>
-            <div className="flex justify-evenly">
-              <img className="w-8" src={iconFacebook} alt="logo facebook" />
-              <img className="w-9" src={iconLinkedin} alt="logo linkedin" />
-              <img className="w-8" src={iconIg} alt="logo instagram" />
-              <img className="w-8" src={iconWhatsapp} alt="logo whatsapp" />
-            </div>
-          </div>
+    <footer className="bg-white text-black py-6 min-h-[200px] relative">
+      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#bb94e7] to-[#341747]"></div>
+
+      <div className="flex flex-col md:flex-row items-center justify-between max-w-6xl mx-auto px-4 h-full">
+        {/* Logo */}
+        <div className="w-full md:w-1/2 flex justify-center md:justify-start items-center mb-4 md:mb-0">
+          <img
+            src="public/images/logo.png"
+            alt="Logo"
+            className="h-40 w-auto object-contain transform hover:scale-105 transition-transform"
+          />
         </div>
-        <div className="w-9/12 flex flex-col items-center text-white pt-2 ">
-          <div className="flex flex-col w-2/6 justify-center items-center pb-5">
-            <h2 className="text-center text-3xl font-bold">
+
+        {/* opciones*/}
+        <div className="w-full md:w-1/2 flex flex-col items-center font-impact">
+          <div className="text-center mb-4">
+            <p className="text-lg md:text-xl">
               ¿Quieres saber más de nosotros?
-            </h2>
-            <h4 className="text-center text-xl">Contáctanos hoy mismo.</h4>
+            </p>
+            <p className="mb-4 md:mb-6 text-sm md:text-base">
+              Contáctanos hoy mismo.
+            </p>
           </div>
-          <div>
-            <div className="flex space-x-2 pb-3">
-              <img className="w-14" src={iconEmail} alt="logo email" />
-              <div>
-                <h4 className="text-xl font-bold pt-3">Por e-mail</h4>
-                <p>contactenos@fundacionantivirusparaladesercion.org</p>
-              </div>
-            </div>
-            <div className="flex pb-5 space-x-2">
-              <img className="w-14" src={iconTel} alt="logo telefono" />
-              <div>
-                <h4 className="text-xl font-bold pt-3">Por WhatsApp</h4>
-                <p>+57 3226367781</p>
-              </div>
-            </div>
+
+          {/* Redes sociales */}
+          <div className="flex flex-wrap justify-center gap-4 mb-4">
+            <a
+              href="https://www.instagram.com/somosantivirus"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="relative flex items-center justify-center w-12 h-12 rounded-full transition duration-300 hover:bg-[#FFBA08]"
+            >
+              <Instagram size={32} />
+            </a>
+
+            <a
+              href="https://api.whatsapp.com/send?phone=573173831481&text=phone_number&app_absent=0"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="relative flex items-center justify-center w-12 h-12 rounded-full transition duration-300 hover:bg-[#FFBA08]"
+            >
+              <img
+                src="public/images/whatsapp.png"
+                alt="WhatsApp"
+                className="w-8 h-8"
+              />
+            </a>
+
+            <a
+              href="https://www.linkedin.com/company/antivirus-desercion/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="relative flex items-center justify-center w-12 h-12 rounded-full transition duration-300 hover:bg-[#FFBA08]"
+            >
+              <Linkedin size={32} />
+            </a>
+
+            <a
+              href="https://www.facebook.com/p/Fundaci%C3%B3n-Antivirus-para-la-Deserci%C3%B3n-100089714876149/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="relative flex items-center justify-center w-12 h-12 rounded-full transition duration-300 hover:bg-[#FFBA08]"
+            >
+              <Facebook size={32} />
+            </a>
+
+            <a
+              href="https://www.youtube.com/channel/UCCDsmMeIqSWGk_fh1m9FX0w"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="relative flex items-center justify-center w-12 h-12 rounded-full transition duration-300 hover:bg-[#FFBA08]"
+            >
+              <Youtube size={32} />
+            </a>
           </div>
-          <h3 className="font-bold text-2xl">Banco de Oportunidades</h3>
-          <div className="flex space-x-5">
-            <p>Términos y condiciones</p>
-            <p>Política de privacidad</p>
+
+          <div className="text-center">
+            <p className="text-sm md:text-base">Banco de Oportunidades</p>
+            <p className="text-sm md:text-base">
+              FUNDACIÓN ANTIVIRUS © 2025 - Todos los Derechos Reservados
+            </p>
           </div>
         </div>
       </div>
-    </div>
+    </footer>
   );
-};
-
-export default Footer;*/
+}
