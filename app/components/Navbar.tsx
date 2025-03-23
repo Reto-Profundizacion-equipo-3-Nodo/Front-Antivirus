@@ -1,6 +1,6 @@
 import { Link } from "@remix-run/react";
 import { useState, useEffect, useRef } from "react";
-import { Menu, X, Sun, Moon, Search, User } from "lucide-react";
+import { Sun, Moon, Search, User } from "lucide-react";
 
 export default function Navbar() {
   // Estados 
@@ -41,11 +41,11 @@ export default function Navbar() {
      
       {/* Logo */}
       <div className="h-16 flex items-center pl-4">
-        <img src="/images/logo.png" alt="Logo" className="max-h-20 w-auto object-contain"/>
+        <img src="/public/image/logo.png" alt="Logo" className="max-h-20 w-auto object-contain"/>
       </div>
 
       {/*Opciones pantallas grandes */}
-      <ul className="hidden md:flex gap-16 font-bold">
+      <ul className="hidden md:flex gap-16 font-bold text-lg">
         <li className="relative group">
           <Link to="#inicio" className="hover:text-yellow-300 block pb-2 transform transition-all duration-300 hover:scale-110 origin-bottom">Inicio</Link>
         </li>
@@ -150,7 +150,7 @@ export default function Navbar() {
 
           {/* Boton registro */}
           <div className="flex gap-4 w-full justify-center">
-            <Link to="/registro" className="bg-[#f0d437] text-white text-bold px-6 py-2 rounded-lg text-lg transition-colors duration-300 hover:bg-[#233947]">Registrarme</Link>
+            <Link to="/registro" className="bg-[#f0d437] text-white font-bold px-6 py-2 rounded-lg text-lg transition-colors duration-300 hover:bg-[#233947] text-stroke-black">Registrarme</Link>
           </div>
         </div>
       )}
