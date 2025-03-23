@@ -170,7 +170,7 @@ export default function Register() {
       <Navbar />
       <div className="flex flex-col items-center bg-white">
         {/* Sección de Registro */}
-        <div className="w-full bg-[url('/Image/registerBg.png')] bg-cover bg-center text-white flex items-center px-6 py-4 md:p-9">
+        <div className="w-full bg-[url('/Images/registerBg.png')] bg-cover bg-center text-white flex items-center px-6 py-4 md:p-9">
           <div className="flex-1 text-center">
             <h1 className="text-2xl md:text-3xl font-bold text-center">
               REGISTRATE
@@ -179,7 +179,7 @@ export default function Register() {
           <img
             className="w-32 md:w-52 object-cover"
             alt="Logo"
-            src="Image/logo.png"
+            src="Images/logo.png"
           />
         </div>
 
