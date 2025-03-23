@@ -44,6 +44,11 @@ export default function Navbar() {
           alt="Logo"
           className="max-h-20 w-auto object-contain"
         />
+        <img
+          src="/public/images/logo.png"
+          alt="Logo"
+          className="max-h-20 w-auto object-contain"
+        />
       </div>
 
       {/*Opciones pantallas grandes */}
@@ -133,7 +138,7 @@ export default function Navbar() {
                 Login
               </Link>
               <Link
-                to="/register"
+                to="/registro"
                 className="block px-3 py-1.5 text-base hover:bg-yellow-300/60 transition-colors text-right"
               >
                 Registrarme
@@ -243,7 +248,7 @@ export default function Navbar() {
           {/* Boton register */}
           <div className="flex gap-4 w-full justify-center">
             <Link
-              to="/register"
+              to="/registro"
               className="bg-[#f0d437] text-white font-bold px-6 py-2 rounded-lg text-lg transition-colors duration-300 hover:bg-[#233947] text-stroke-black"
             >
               Registrarme
