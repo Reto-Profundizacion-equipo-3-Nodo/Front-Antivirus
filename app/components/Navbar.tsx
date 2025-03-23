@@ -2,6 +2,7 @@ import { Link } from "@remix-run/react";
 import { useState, useEffect, useRef } from "react";
 import { Sun, Moon, Search, User } from "lucide-react";
 
+
 export default function Navbar() {
   // Estados
   const [isOpen, setIsOpen] = useState(false);
@@ -39,7 +40,7 @@ export default function Navbar() {
       {/* Logo */}
       <div className="h-16 flex items-center pl-4">
         <img
-          src="/public/image/logo.png"
+          src="/public/images/logo.png"
           alt="Logo"
           className="max-h-20 w-auto object-contain"
         />

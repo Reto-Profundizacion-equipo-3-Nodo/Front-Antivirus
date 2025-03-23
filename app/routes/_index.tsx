@@ -1,5 +1,6 @@
 import type { MetaFunction } from "@remix-run/node";
 import Navbar from "~/components/Navbar";
+import Footer from "~/components/Footer";
 import Home from "~/components/Home";
 import HomeOpportunities from "~/components/HomeOpportunities";
 import HomeServices from "~/components/HomeServices";
@@ -15,6 +16,7 @@ export default function Index() {
       <Home />
       <HomeOpportunities />
       <HomeServices />
+      <Footer />
     </div>
   );
 }

@@ -7,21 +7,21 @@ export default function HomeServices() {
       titulo: "Pro-Vocación",
       descripcion:
         "Descubre tu verdadera vocación a través de nuestro programa Pro-Vocación. Te ayudamos a identificar tus fortalezas y a explorar las mejores opciones educativas y profesionales. ¡Da el primer paso hacia tu futuro hoy!",
-      imagen: "/Image/ProVocacion.png",
+      imagen: "/public/images/ProVocacion.png",
     },
     {
       id: 2,
       titulo: "Asesoría Sociopedagógica",
       descripcion:
         "Recibe orientación personalizada para superar los desafíos educativos. Nuestra asesoría sociopedagógica te ofrece herramientas y estrategias para mejorar tu rendimiento académico y bienestar personal.",
-      imagen: "/Image/AsesoriaSociopedagogica.png",
+      imagen: "/public/images/AsesoriaSociopedagogica.png",
     },
     {
       id: 3,
       titulo: "Test Sociovocacional",
       descripcion:
         "¿No estás seguro de cuál es la mejor carrera para ti? Nuestro Test Sociovocacional te guiará en la elección de una carrera basada en tus intereses, habilidades y valores personales. ¡Descubre tu camino ideal!",
-      imagen: "/Image/TestSociovocacional.png",
+      imagen: "/public/images/TestSociovocacional.png",
     },
   ];
 
