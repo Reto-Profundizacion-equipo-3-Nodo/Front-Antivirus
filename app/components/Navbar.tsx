@@ -2,6 +2,7 @@ import { Link } from "@remix-run/react";
 import { useState, useEffect, useRef } from "react";
 import { Sun, Moon, Search, User } from "lucide-react";
 
+
 export default function Navbar() {
   // Estados 
   const [isOpen, setIsOpen] = useState(false);
@@ -253,5 +254,6 @@ export default function Navbar() {
         </div>
       )}
     </nav>
+
   );
 }
