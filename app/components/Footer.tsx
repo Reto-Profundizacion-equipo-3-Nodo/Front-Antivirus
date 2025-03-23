@@ -1,4 +1,4 @@
-import logo from "../assets/images/logo.png";
+/*import logo from "../assets/images/logo.png";
 import iconFacebook from "../assets/icons/iconFacebook.svg";
 import iconLinkedin from "../assets/icons/iconLinkedin.svg";
 import iconIg from "../assets/icons/iconIg.svg";
@@ -59,4 +59,4 @@ const Footer = () => {
   );
 };
 
-export default Footer;
+export default Footer;*/
