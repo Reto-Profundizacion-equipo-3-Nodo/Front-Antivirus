@@ -5,11 +5,8 @@ import Home from "~/components/Home";
 import HomeOpportunities from "~/components/HomeOpportunities";
 import HomeServices from "~/components/HomeServices";
 
-
 export const meta: MetaFunction = () => {
-  return [
-    { title: "Antivirus" },
-  ];
+  return [{ title: "Antivirus" }];
 };
 
 export default function Index() {
@@ -23,8 +20,3 @@ export default function Index() {
     </div>
   );
 }
-
-
-    
-
-   

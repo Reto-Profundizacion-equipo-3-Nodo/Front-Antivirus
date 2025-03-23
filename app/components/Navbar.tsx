@@ -4,33 +4,31 @@ import { Sun, Moon, Search, User } from "lucide-react";
 
 
 export default function Navbar() {
-  // Estados 
+  // Estados
   const [isOpen, setIsOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
 
-  
   const userMenuRef = useRef<HTMLDivElement>(null);
   const userButtonRef = useRef<HTMLButtonElement>(null);
 
- useEffect(() => {
-   const handleClickOutside = (event: MouseEvent) => {
-     
-     if (!userMenuRef.current || !userButtonRef.current) return;
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!userMenuRef.current || !userButtonRef.current) return;
 
-     const target = event.target as Node;
-     const isClickInsideMenu = userMenuRef.current.contains(target);
-     const isClickOnButton = userButtonRef.current.contains(target);
+      const target = event.target as Node;
+      const isClickInsideMenu = userMenuRef.current.contains(target);
+      const isClickOnButton = userButtonRef.current.contains(target);
 
-     if (!isClickInsideMenu && !isClickOnButton) {
-       setIsUserMenuOpen(false);
-     }
-   };
+      if (!isClickInsideMenu && !isClickOnButton) {
+        setIsUserMenuOpen(false);
+      }
+    };
 
-   document.addEventListener("mousedown", handleClickOutside);
-   return () => document.removeEventListener("mousedown", handleClickOutside);
- }, []);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode);
@@ -135,7 +133,7 @@ export default function Navbar() {
                 Login
               </Link>
               <Link
-                to="/registro"
+                to="/register"
                 className="block px-3 py-1.5 text-base hover:bg-yellow-300/60 transition-colors text-right"
               >
                 Registrarme
@@ -242,10 +240,10 @@ export default function Navbar() {
             </li>
           </ul>
 
-          {/* Boton registro */}
+          {/* Boton register */}
           <div className="flex gap-4 w-full justify-center">
             <Link
-              to="/registro"
+              to="/register"
               className="bg-[#f0d437] text-white font-bold px-6 py-2 rounded-lg text-lg transition-colors duration-300 hover:bg-[#233947] text-stroke-black"
             >
               Registrarme
@@ -254,6 +252,5 @@ export default function Navbar() {
         </div>
       )}
     </nav>
-
   );
 }
