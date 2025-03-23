@@ -51,8 +51,8 @@ export default function HomeServices() {
                     alt={servicio.titulo}
                     className="rounded-lg w-[472px] h-[297px] object-contain"
                   />
-                  <h3 className="pt-2 text-xl font-bold text-[#292525]">{servicio.titulo}</h3>
-                  <p className="text-[#252525] text-sm mt-2">{servicio.descripcion}</p>
+                  <h3 className="pt-2 text-xl font-impact text-[#292525]">{servicio.titulo}</h3>
+                  <p className="text-[#252525] font-reddit text-sm mt-2">{servicio.descripcion}</p>
                 </div>
               </div>
             ))}
