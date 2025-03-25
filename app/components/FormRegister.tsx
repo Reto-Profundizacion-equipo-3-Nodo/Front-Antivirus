@@ -42,19 +42,28 @@ const FormRegister = () => {
             type: "password",
             showEye: true,
         },
+        {
+            id: "codigo",
+            label: "Código de administrador (opcional)",
+            placeholder: "Código",
+            type: "text",
+        }
     ];
     const onSubmit = async (data) => {
 
         setMessage({ text: "", type: "" });
         setIsSubmitting(true);
 
+        // Validación del código para asignar el rol de administrador
+        //TODO: lo debo guardo en las variables de entorno
+        const rol = data.codigo === "123456789" ? "admin" : "user";
 
         const fechaNacimiento = new Date(data.nacimiento as string);
         const user = {
             name: data.nombre,
             email: data.email,
             password: data.password,
-            rol: "user",
+            rol: rol,
             celular: data.celular,
             fechaNacimiento: fechaNacimiento.toISOString(),
         };
