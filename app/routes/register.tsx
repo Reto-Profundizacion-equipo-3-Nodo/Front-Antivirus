@@ -1,8 +1,6 @@
-import { Form } from "@remix-run/react";
-import { EyeIcon, EyeOffIcon } from "lucide-react";
-import { useState } from "react";
 import Navbar from "~/components/Navbar";
 import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
+import FormRegister from "~/components/FormRegister";
 
 interface TimelineStep {
   number: string;
@@ -11,55 +9,13 @@ interface TimelineStep {
 }
 
 export default function Register() {
-  const [showPassword, setShowPassword] = useState({
-    password: false,
-    confirmPassword: false,
-  });
 
-  const [errorMessage, setErrorMessage] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   //Auth con Google
   const clienteID =
     "97095162816-lu3019h98mm3s5pmkpaujhlfd5nb606c.apps.googleusercontent.com";
 
-  const togglePasswordVisibility = (field: string) => {
-    setShowPassword((prevState) => ({
-      ...prevState,
-      [field]: !prevState[field as keyof typeof prevState],
-    }));
-  };
 
-  const formFields = [
-    { id: "nombre", label: "Nombre", placeholder: "Nombre", type: "text" },
-    {
-      id: "celular",
-      label: "Celular",
-      placeholder: "1234567890",
-      type: "text",
-    },
-    {
-      id: "nacimiento",
-      label: "Día de nacimiento",
-      placeholder: "DD/MM/AAAA",
-      type: "date",
-    },
-    { id: "email", label: "Email", placeholder: "example@gmail.com" },
-    {
-      id: "password",
-      label: "Contraseña",
-      placeholder: "***********",
-      type: "password",
-      showEye: true,
-    },
-    {
-      id: "confirmPassword",
-      label: "Confirma tu contraseña",
-      placeholder: "***********",
-      type: "password",
-      showEye: true,
-    },
-  ];
 
   const steps: TimelineStep[] = [
     {
@@ -88,88 +44,6 @@ export default function Register() {
     },
   ];
 
-  const validateForm = (formData: FormData) => {
-    const password = formData.get("password") as string;
-    const confirmPassword = formData.get("confirmPassword") as string;
-    if (!password || !confirmPassword) {
-      return "Las contraseñas son requeridas.";
-    }
-    if (password !== confirmPassword) {
-      return "Las contraseñas no coinciden.";
-    }
-    if (
-      !formData.get("nombre") ||
-      !formData.get("email") ||
-      !formData.get("celular") ||
-      !formData.get("nacimiento")
-    ) {
-      return "Todos los campos son requeridos.";
-    }
-    return "";
-  };
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    setErrorMessage("");
-    const formData = new FormData(event.currentTarget);
-
-    const validationError = validateForm(formData);
-    if (validationError) {
-      setErrorMessage(validationError);
-      return;
-    }
-
-    setIsSubmitting(true);
-    const fechaNacimiento = new Date(formData.get("nacimiento") as string);
-    const user = {
-      name: formData.get("nombre"),
-      email: formData.get("email"),
-      password: formData.get("password"),
-      rol: "user",
-      celular: formData.get("celular"),
-      fechaNacimiento: fechaNacimiento.toISOString(),
-    };
-
-    try {
-      const response = await fetch("http://localhost:5261/api/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(user),
-      });
-
-      // Verifica si la respuesta es exitosa
-      if (response.ok) {
-        const data = await response.json();
-        setErrorMessage("Usuario registrado correctamente");
-      } else {
-        // Si la respuesta no es ok, manejar el error
-        const errorText = await response.text(); // Leemos la respuesta como texto
-
-        if (response.status === 500) {
-          // Si el error es 500, mostrar el mensaje de error
-          setErrorMessage(
-            errorText || "Ocurrió un error interno en el servidor"
-          );
-        } else if (response.status === 409) {
-          // Si el status es 409, significa que el email ya está registrado
-          setErrorMessage("El email ya está registrado");
-        } else {
-          // Otros errores del servidor
-          const errorData = await response.json();
-          setErrorMessage(
-            errorData.message || "Hubo un error al registrar el usuario"
-          );
-        }
-      }
-    } catch (error) {
-      // Error en la solicitud (conexión, tiempo de espera, etc.)
-      setErrorMessage("Ocurrió un error al registrar el usuario");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
   return (
     <>
       <Navbar />
@@ -241,59 +115,9 @@ export default function Register() {
               <hr className="w-1/3 border-gray-300" />
             </div>
 
-            {/* Campos del formulario */}
-            {errorMessage && (
-              <div className="text-red-500 text-center">{errorMessage}</div>
-            )}
-            <Form method="post" onSubmit={handleSubmit} className="space-y-5">
-              {formFields.map((field) => (
-                <div
-                  key={field.id}
-                  className="flex items-center bg-[#ebebeb] rounded-lg px-4 py-3"
-                >
-                  <div className="flex-1">
-                    <label className="block text-xs text-black">
-                      {field.label}
-                    </label>
-                    <input
-                      type={
-                        field.type === "date"
-                          ? "date"
-                          : field.showEye && showPassword[field.id]
-                          ? "text"
-                          : field.type
-                      }
-                      name={field.id}
-                      id={field.id}
-                      placeholder={field.placeholder}
-                      className="w-full bg-transparent text-black font-bold text-base outline-none"
-                      onClick={(e) => e.target.showPicker()}
-                    />
-                  </div>
-                  {field.showEye && (
-                    <button
-                      type="button"
-                      onClick={() => togglePasswordVisibility(field.id)}
-                      className="focus:outline-none"
-                    >
-                      {showPassword[field.id] ? (
-                        <EyeOffIcon className="w-5 h-5 text-gray-500 cursor-pointer" />
-                      ) : (
-                        <EyeIcon className="w-5 h-5 text-gray-500 cursor-pointer" />
-                      )}
-                    </button>
-                  )}
-                </div>
-              ))}
 
-              {/* Botón de Envío */}
-              <button
-                type="submit"
-                className="w-full bg-[#faa307] text-white text-[25px] font-black py-4 rounded-lg"
-              >
-                Crear Cuenta
-              </button>
-            </Form>
+            {/* Formulario de registro */}
+            <FormRegister />
           </div>
         </section>
         {/* Seccion de información */}
