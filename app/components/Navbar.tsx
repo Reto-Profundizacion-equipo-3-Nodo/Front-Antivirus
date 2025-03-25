@@ -44,11 +44,6 @@ export default function Navbar() {
           alt="Logo"
           className="max-h-20 w-auto object-contain"
         />
-        <img
-          src="/public/images/logo.png"
-          alt="Logo"
-          className="max-h-20 w-auto object-contain"
-        />
       </div>
 
       {/*Opciones pantallas grandes */}
