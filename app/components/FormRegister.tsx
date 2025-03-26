@@ -137,7 +137,7 @@ const FormRegister = () => {
                             <input
                                 // validacion que el campo sea un email valido
                                 {...register(field.id, {
-                                    required: "Este campo es obligatorio",
+                                    required: field.id !== "codigo" && "Este campo es obligatorio",
                                     pattern: field.id === "email" && {
                                         value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                                         message: "El email no es válido",
