@@ -95,14 +95,14 @@ export default function Register() {
             </div>
 
             {/* Imagen del cohete */}
-            <div className="w-full md:w-1/3 flex justify-center mt-6 md:mt-0">
+            <div className="w-full md:w-1/3 flex justify-center items-end mt-6 md:mt-0">
               <div
-                className={`md:block hidden transition-transform duration-[2500ms] ease-in-out ${isRocketFlying ? "transform translate-y-[-2000px]" : ""}`}
+                className={`md:block hidden transition-transform duration-[2500ms] ease-in-out  ${isRocketFlying ? "transform translate-y-[-2000px]" : ""}`}
               >
                 <img
                   src="/Images/Cohete.png"
                   alt="Cohete"
-                  className="w-40 h-40 md:w-full md:h-full object-contain"
+                  className="w-40 h-40 md:w-full md:h-full object-contain pt-[41rem]"
                 />
               </div>
             </div>
