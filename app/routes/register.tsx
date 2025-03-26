@@ -97,10 +97,10 @@ export default function Register() {
             {/* Imagen del cohete */}
             <div className="w-full md:w-1/3 flex justify-center mt-6 md:mt-0">
               <div
-                className={`md:block hidden transition-transform duration-500 ease-in-out ${isRocketFlying ? "transform translate-y-[-200px]" : ""}`}
+                className={`md:block hidden transition-transform duration-[2500ms] ease-in-out ${isRocketFlying ? "transform translate-y-[-2000px]" : ""}`}
               >
                 <img
-                  src="/Images/Cohete.png" // Cambia esta ruta por la imagen de tu cohete
+                  src="/Images/Cohete.png"
                   alt="Cohete"
                   className="w-40 h-40 md:w-full md:h-full object-contain"
                 />
@@ -136,7 +136,7 @@ export default function Register() {
             </div>
           </div>
 
-          {/* Imagen */}
+          {/* Imagen Footer*/}
           <div className="md:w-1/2 w-full flex justify-center mt-0 md:mt-52">
             <div className="w-full max-w-lg">
               <img
