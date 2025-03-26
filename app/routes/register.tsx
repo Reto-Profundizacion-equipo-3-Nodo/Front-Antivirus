@@ -1,6 +1,7 @@
 import Navbar from "~/components/Navbar";
 import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 import FormRegister from "~/components/FormRegister";
+import { useState } from "react";
 
 interface TimelineStep {
   number: string;
@@ -9,7 +10,7 @@ interface TimelineStep {
 }
 
 export default function Register() {
-
+  const [isRocketFlying, setIsRocketFlying] = useState(false);
 
   //Auth con Google
   const clienteID =
@@ -44,111 +45,89 @@ export default function Register() {
     },
   ];
 
+  const handleRocketLaunch = () => {
+
+    setIsRocketFlying(true);
+    setTimeout(() => {
+      setIsRocketFlying(false);
+    }, 3000);
+  };
+
   return (
     <>
       <Navbar />
       <div className="flex flex-col items-center bg-white">
-        {/* Sección de Registro */}
-        <div className="w-full bg-[url('/Images/registerBg.png')] bg-cover bg-center text-white flex items-center px-6 py-4 md:p-9">
-          <div className="flex-1 text-center">
-            <h1 className="text-2xl md:text-3xl font-bold text-center">
-              REGISTRATE
-            </h1>
-          </div>
-          <img
-            className="w-32 md:w-52 object-cover"
-            alt="Logo"
-            src="Images/logo.png"
-          />
-        </div>
+        {/* Card con Formulario y Login */}
+        <section className="max-w-7xl mx-auto mt-16 mb-24 px-6">
+          <div className="flex flex-col md:flex-row items-center justify-center space-y-6 md:space-y-0 md:space-x-6">
+            {/* Card para Titulo,Login(google) y Formulario */}
+            <div className="bg-white shadow-lg rounded-lg p-6 w-full md:w-2/3">
+              <h2 className="text-center mb-12 text-4xl font-medium text-[#2e2e2e]">
+                ¿Preparado para encontrar tu próxima{" "}
+                <span className="font-black text-[#00266b] text-[46px]">oportunidad?</span>
+              </h2>
+              {/* Botón de Google */}
+              <GoogleOAuthProvider clientId={clienteID}>
+                <GoogleLogin
+                  onSuccess={(response) => console.log(response)}
+                  onFailure={(response) => console.log(response)}
+                  useOneTap
+                  shape="pill"
+                  theme="filled_blue"
+                  logo_alignment="center"
+                />
 
-        {/* Sección de Bienvenida */}
-        <section className="max-w-[987px] mx-auto mt-16 mb-24">
-          <h2 className="text-center mb-12 text-4xl font-medium text-[#2e2e2e]">
-            ¿Preparado para encontrar tu próxima{" "}
-            <span className="font-black text-[#00266b] text-[46px]">
-              oportunidad?
-            </span>
-          </h2>
+              </GoogleOAuthProvider>
 
-          <div className="max-w-[766px] mx-auto space-y-5">
-            {/* Botón de Google */}
-            <GoogleOAuthProvider clientId={clienteID}>
-              <GoogleLogin
-                onSuccess={(response) => console.log(response)}
-                onFailure={(response) => console.log(response)}
-                useOneTap
-                shape="pill"
-                theme="outline"
-              />
-            </GoogleOAuthProvider>
+              {/* Separador */}
+              <div className="flex items-center justify-center my-6">
+                <hr className="w-1/3 border-gray-300" />
+                <span className="mx-4 text-gray-500">O</span>
+                <hr className="w-1/3 border-gray-300" />
+              </div>
 
-            {/* Botón de Facebook */}
-            <button className="flex items-center justify-center w-full bg-white border border-gray-300 shadow-md rounded-md px-4 py-2 text-gray-700 font-medium hover:shadow-lg transition">
-              <svg
-                className="w-6 h-6 md:w-7 md:h-7"
-                xmlns="http://www.w3.org/2000/svg"
-                x="0px"
-                y="0px"
-                width="100"
-                height="100"
-                viewBox="0 0 48 48"
-              >
-                <path
-                  fill="none"
-                  d="M42,37c0,2.762-2.238,5-5,5H11c-2.761,0-5-2.238-5-5V11c0-2.762,2.239-5,5-5h26c2.762,0,5,2.238,5,5	V37z"
-                ></path>
-                <path
-                  fill="#3f51b5"
-                  d="M34.368,25H31v17h-5V25h-3v-4h3v-2.41c0.002-3.508,1.459-5.59,5.592-5.59H35v4h-2.287	C31.104,17,31,17.6,31,18.723V21h4L34.368,25z"
-                ></path>
-              </svg>
-              <span className="ml-3 text-sm md:text-base">
-                Ingresa con Facebook
-              </span>
-            </button>
-
-            {/* Separador */}
-            <div className="flex items-center justify-center my-6">
-              <hr className="w-1/3 border-gray-300" />
-              <span className="mx-4 text-gray-500">O</span>
-              <hr className="w-1/3 border-gray-300" />
+              {/* Título de formulario */}
+              <div className="text-center text-lg font-semibold text-gray-700 mb-6">
+                Completa los datos para crear tu cuenta
+              </div>
+              {/* Formulario de registro */}
+              <FormRegister handleRocketLaunch={handleRocketLaunch} />
             </div>
 
-
-            {/* Formulario de registro */}
-            <FormRegister />
+            {/* Imagen del cohete */}
+            <div className="w-full md:w-1/3 flex justify-center mt-6 md:mt-0">
+              <div
+                className={`md:block hidden transition-transform duration-500 ease-in-out ${isRocketFlying ? "transform translate-y-[-200px]" : ""}`}
+              >
+                <img
+                  src="/Images/Cohete.png" // Cambia esta ruta por la imagen de tu cohete
+                  alt="Cohete"
+                  className="w-40 h-40 md:w-full md:h-full object-contain"
+                />
+              </div>
+            </div>
           </div>
         </section>
-        {/* Seccion de información */}
+
+        {/* Sección de información */}
         <section className="flex flex-col md:flex-row bg-white p-6 mt-6 rounded-lg shadow-md">
-          {/* Contenido */}
           <div className="from-blue-50 to-gray-100 py-16 md:py-0 px-4 sm:px-6 lg:px-8 md:w-1/2">
             <div className="max-w-4xl mx-auto">
               <div className="relative">
                 {steps.map((step, index) => (
                   <div key={step.number} className="relative pb-12 last:pb-0">
-                    {/* Vertical line */}
                     {index !== steps.length - 1 && (
                       <div className="absolute left-8 top-14 bottom-0 w-0.5 bg-blue-200"></div>
                     )}
-
                     <div className="relative flex items-start group">
-                      {/* Number circle */}
                       <div className="flex items-center justify-center w-16 h-16 rounded-full bg-white shadow-lg border-2 border-blue-500 z-10">
-                        <span className="text-2xl font-bold text-blue-600">
-                          {step.number}
-                        </span>
+                        <span className="text-2xl font-bold text-blue-600">{step.number}</span>
                       </div>
-
-                      {/* Content */}
                       <div className="ml-6 pt-2">
                         <h2 className="text-2xl font-bold text-gray-800 mb-2 group-hover:text-blue-600 transition-colors">
                           {step.title}
                         </h2>
-                        <p className="text-gray-600 leading-relaxed">
-                          {step.description}
-                        </p>
+                        <p className="text-gray-600 leading-relaxed">{step.description}</p>
                       </div>
                     </div>
                   </div>
@@ -159,7 +138,7 @@ export default function Register() {
 
           {/* Imagen */}
           <div className="md:w-1/2 w-full flex justify-center mt-0 md:mt-52">
-            <div className="w-full max-w-lg ">
+            <div className="w-full max-w-lg">
               <img
                 src="/registerImg.png"
                 alt="registerImg"

@@ -1,9 +1,9 @@
 import { useForm } from "react-hook-form";
 import { useState } from "react";
-import { EyeIcon, EyeOffIcon } from "lucide-react";
+import { EyeIcon, EyeOffIcon, PhoneIcon, MailIcon, UserIcon, CakeIcon, KeyIcon, ShieldCheckIcon } from "lucide-react"
 
 
-const FormRegister = () => {
+const FormRegister = ({ handleRocketLaunch }) => {
     const { register, handleSubmit, formState: { errors }, watch } = useForm();
     const [showPassword, setShowPassword] = useState({
         password: false,
@@ -14,40 +14,13 @@ const FormRegister = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const formFields = [
-        { id: "nombre", label: "Nombre", placeholder: "Nombre", type: "text" },
-        {
-            id: "celular",
-            label: "Celular",
-            placeholder: "1234567890",
-            type: "text",
-        },
-        {
-            id: "nacimiento",
-            label: "Día de nacimiento",
-            placeholder: "DD/MM/AAAA",
-            type: "date",
-        },
-        { id: "email", label: "Email", placeholder: "example@gmail.com" },
-        {
-            id: "password",
-            label: "Contraseña",
-            placeholder: "***********",
-            type: "password",
-            showEye: true,
-        },
-        {
-            id: "confirmPassword",
-            label: "Confirma tu contraseña",
-            placeholder: "***********",
-            type: "password",
-            showEye: true,
-        },
-        {
-            id: "codigo",
-            label: "Código de administrador (opcional)",
-            placeholder: "Código",
-            type: "text",
-        }
+        { id: "nombre", label: "Nombre", placeholder: "Nombre", type: "text", icon: <UserIcon className="w-5 h-5 text-gray-500" /> },
+        { id: "celular", label: "Celular", placeholder: "1234567890", type: "text", icon: <PhoneIcon className="w-5 h-5 text-gray-500" /> },
+        { id: "nacimiento", label: "Día de nacimiento", placeholder: "DD/MM/AAAA", type: "date", icon: <CakeIcon className="w-5 h-5 text-gray-500" /> },
+        { id: "email", label: "Email", placeholder: "example@gmail.com", icon: <MailIcon className="w-5 h-5 text-gray-500" /> },
+        { id: "password", label: "Contraseña", placeholder: "***********", type: "password", showEye: true, icon: <KeyIcon className="w-5 h-5 text-gray-500" /> },
+        { id: "confirmPassword", label: "Confirma tu contraseña", placeholder: "***********", type: "password", showEye: true, icon: <KeyIcon className="w-5 h-5 text-gray-500" /> },
+        { id: "codigo", label: "Código de administrador (opcional)", placeholder: "Código", type: "text", icon: <ShieldCheckIcon className="w-5 h-5 text-gray-500" /> }
     ];
     const onSubmit = async (data) => {
 
@@ -81,6 +54,7 @@ const FormRegister = () => {
             if (response.ok) {
                 const data = await response.json();
                 setMessage({ text: "Usuario registrado correctamente", type: "success" });
+                handleRocketLaunch();
             } else {
                 // Si la respuesta no es ok, manejar el error
                 const errorText = await response.text(); // Leemos la respuesta como texto
@@ -129,8 +103,9 @@ const FormRegister = () => {
             )}
             <form method="post" onSubmit={handleSubmit(onSubmit)} className="space-y-5">
                 {formFields.map((field) => (
-                    <div key={field.id} className="flex items-center bg-[#ebebeb] rounded-lg px-4 py-3">
+                    <div key={field.id} className={`flex items-center bg-[#ebebeb]  p-3 rounded-lg space-x-2 ${errors[field.id] ? "bg-red-50 border border-red-300 text-red-700" : ""}`}>
                         <div className="flex-1">
+                            <span>{field.icon}</span>
                             <label htmlFor={field.id} className="block text-xs text-black">
                                 {field.label}
                             </label>
