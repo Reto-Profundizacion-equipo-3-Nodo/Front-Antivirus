@@ -58,12 +58,13 @@ export default function Navbar() {
         </li>
 
         <li className="relative group">
-          <Link
-            to="#servicios"
-            className="hover:text-yellow-300 block pb-2 transform transition-all duration-300 hover:scale-110 origin-bottom"
-          >
-            Servicios
-          </Link>
+        <Link
+          to="/services"
+          className="hover:text-yellow-300 block pb-2 transform transition-all duration-300 hover:scale-110 origin-bottom"
+        >
+          Servicios
+        </Link>
+
         </li>
 
         <li className="relative group">
@@ -210,13 +211,13 @@ export default function Navbar() {
             </li>
 
             <li>
-              <Link
-                to="#servicios"
-                className="block py-2 transition-colors duration-300 hover:text-[#708BC6]"
-                onClick={() => setIsOpen(false)}
-              >
-                Servicios
-              </Link>
+            <Link
+              to="/services" // Cambiamos el ancla por la ruta correcta
+              className="hover:text-yellow-300 block pb-2 transform transition-all duration-300 hover:scale-110 origin-bottom"
+            >
+              Servicios
+            </Link>
+
             </li>
 
             <li>
