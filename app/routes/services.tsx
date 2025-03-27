@@ -60,7 +60,7 @@ export default function Servicios() {
 
             {/* Llamado a la acción para unirse */}
             <motion.div
-              className="text-center py-12 space-y-6"
+              className={styles.callToAction}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 1 }}
@@ -68,11 +68,10 @@ export default function Servicios() {
               <h2 className={styles.title}>¿Quieres ser parte del cambio?</h2>
 
               <p className={styles.text}>
-                Únete a nuestra comunidad y ayuda a crear un mundo digital más
-                seguro.
+                Únete a nuestra comunidad y ayuda a crear un mundo digital más seguro.
               </p>
 
-              <div className="mt-8">
+              <div className={styles.buttonContainer}>
                 <Link to="/voluntariado" className={styles.button}>
                   Únete Ahora
                 </Link>

@@ -13,9 +13,7 @@
 .background {
   position: relative;
   min-height: 100vh;
-  background-image: url('/Images/Background.webp');
-  background-size: cover;
-  background-position: center;
+  background: url('/Images/Background.webp') center/cover no-repeat;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -25,9 +23,10 @@
 .overlay {
   position: absolute;
   inset: 0;
-  backdrop-filter: blur(6px);
+  backdrop-filter: blur(10px);
   background: rgba(0, 0, 0, 0.3);
 }
+
 
 /* Contenido centrado */
 .content {
@@ -38,10 +37,10 @@
 
 /* Caja con efecto de cristal */
 .glassBox {
-  width: 100%;
-  max-width: 1400px;
-  padding: 3rem;
-  backdrop-filter: blur(8px);
+  width: 90%;
+  max-width: 1200px;
+  padding: 2rem;
+  backdrop-filter: blur(18px);
   background: rgba(255, 255, 255, 0.15);
   border-radius: 1rem;
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
@@ -51,85 +50,129 @@
   align-items: center;
 }
 
-/* Contenedor de tarjetas en formato grid */
-.serviceContainer {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-  justify-content: center;
-  place-items: center;
-  width: 100%; /* Asegura que ocupe todo el ancho */
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
-  grid-auto-rows: 1fr;
-}
-
-/* Ajuste de tarjetas individuales */
-.serviceCard {
-  min-width: 280px;
-  max-width: 100%;
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-}
-
-/* Media query para pantallas móviles (ancho máximo de 600px) */
-@media (max-width: 600px) {
-  .serviceContainer {
-    grid-template-columns: 1fr; /* 1 columna en pantallas móviles */
-  }
-}
-
-/* Media query para tabletas (ancho entre 601px y 1024px) */
-@media (min-width: 601px) and (max-width: 1024px) {
-  .serviceContainer {
-    grid-template-columns: repeat(2, 1fr); /* 2 columnas en tabletas */
-  }
-}
-
-/* Ajuste de altura para evitar expansión excesiva */
-.serviceContainer > div {
-  max-height: 400px; /* Ajusta este valor según tus necesidades */
-}
-
-/* Estilos para títulos */
+/* Título principal con gradiente */
 .title {
-  font-size: 2rem;
+  font-size: clamp(1.8rem, 5vw, 3rem);
   font-weight: bold;
-  color: #222d56;
   text-align: center;
   margin-bottom: 1rem;
+  background: linear-gradient(90deg, #222D56, #32526E);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-/* Estilos para los párrafos */
+/* Texto general */
 .text {
-  font-size: 1.125rem;
-  color: #ffffff;
+  font-size: clamp(1rem, 4vw, 1.5rem);
+  color: #f5f5f5;
   text-align: center;
   max-width: 900px;
   margin-bottom: 30px;
   word-wrap: break-word;
 }
 
-/* Botones */
-.button {
-  background: #ffba08;
-  color: #ffffff;
-  padding: 12px 24px;
+/* Contenedor de tarjetas en formato grid */
+.serviceContainer {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 30px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 20px auto 0;
+  padding: 30px;
+  align-items: stretch;
+}
+
+/* Tarjeta de servicio */
+.serviceCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-width: 280px;
+  max-width: 100%;
+  padding: 1rem;
   border-radius: 8px;
-  font-weight: bold;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  box-shadow: 0px 4px 10px rgba(255, 186, 8, 0.4);
-  display: inline-block;
   text-align: center;
 }
 
+/* Llamado a la Acción */
+
+.callToAction {
+  text-align: center;
+  padding: 3rem 1rem;
+  margin-top: 2rem;
+}
+
+.callToAction h2 {
+  margin-bottom: 1.5rem;
+}
+
+.callToAction p {
+  margin-bottom: 2rem;
+}
+
+.callToAction .buttonContainer {
+  margin-top: 2.5rem;
+}
+
+/* Botón animado */
+.button {
+  background: linear-gradient(90deg, rgba(244, 201, 93, 0.97), rgba(250, 204, 21, 0.94));
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: clamp(0.8rem, 2.5vw, 1rem);
+  transition: all 0.4s ease-in-out;
+  box-shadow: 0px 4px 10px rgba(244, 201, 93, 0.4);
+  display: inline-block;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Efecto en hover */
 .button:hover {
-  background: #e8a707;
-  box-shadow: 0px 6px 15px rgba(255, 186, 8, 0.5);
+  background: linear-gradient(90deg, #e8a707, #f4c95d);
+  box-shadow: 0px 6px 15px rgba(244, 201, 93, 0.5);
   transform: scale(1.05);
+}
+
+/* Efecto de animación en el botón */
+.button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.2);
+  transition: left 0.5s ease-in-out;
+}
+
+.button:hover::before {
+  left: 100%;
+}
+
+/* Responsividad */
+
+/* Teléfonos pequeños */
+@media (max-width: 600px) {
+  .serviceContainer {
+    grid-template-columns: 1fr; /* 1 columna en móviles */
+    padding: 20px;
+  }
+
+  .glassBox {
+    padding: 1.5rem;
+  }
+}
+
+/* Tablets */
+@media (min-width: 601px) and (max-width: 1024px) {
+  .serviceContainer {
+    grid-template-columns: repeat(2, 1fr); /* 2 columnas en tablets */
+  }
 }
