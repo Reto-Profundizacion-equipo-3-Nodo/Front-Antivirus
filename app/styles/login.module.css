@@ -1,0 +1,51 @@
+/* Fondo con imagen */
+.bgLogin {
+    position: relative;
+    min-height: 100vh;
+    background-image: url('/Images/Background.webp');
+    background-size: cover;
+    background-position: center;
+}
+
+/* Capa de opacidad y desenfoque */
+.bgLogin::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    backdrop-filter: blur(6px);
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 0;
+}
+
+/* Contenedor principal para que los elementos estén sobre el fondo */
+.bgLogin > * {
+    position: relative;
+    z-index: 10;
+}
+
+/* Estilos para los inputs */
+input[type="email"], input[type="password"] {
+    width: 100%;
+    padding: 12px 15px 12px 40px;
+    border: 1px solid #708BC6;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.7);
+    font-size: 16px;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+/* Estilos para los botones */
+.btn-google, .btn-facebook {
+    background: #FFBA08;
+    color: #222D56;
+    padding: 12px;
+    border-radius: 6px;
+    font-weight: bold;
+    transition: background 0.3s;
+    cursor: pointer;
+}
+
+.btn-google:hover, .btn-facebook:hover {
+    background: #E0A007;
+}

@@ -58,12 +58,13 @@ export default function Navbar() {
         </li>
 
         <li className="relative group">
-          <Link
-            to="#servicios"
-            className="hover:text-yellow-300 block pb-2 transform transition-all duration-300 hover:scale-110 origin-bottom"
-          >
-            Servicios
-          </Link>
+        <Link
+          to="/services"
+          className="hover:text-yellow-300 block pb-2 transform transition-all duration-300 hover:scale-110 origin-bottom"
+        >
+          Servicios
+        </Link>
+
         </li>
 
         <li className="relative group">
@@ -133,7 +134,7 @@ export default function Navbar() {
                 Login
               </Link>
               <Link
-                to="/register"
+                to="/registro"
                 className="block px-3 py-1.5 text-base hover:bg-yellow-300/60 transition-colors text-right"
               >
                 Registrarme
@@ -210,13 +211,13 @@ export default function Navbar() {
             </li>
 
             <li>
-              <Link
-                to="#servicios"
-                className="block py-2 transition-colors duration-300 hover:text-[#708BC6]"
-                onClick={() => setIsOpen(false)}
-              >
-                Servicios
-              </Link>
+            <Link
+              to="/services" // Cambiamos el ancla por la ruta correcta
+              className="hover:text-yellow-300 block pb-2 transform transition-all duration-300 hover:scale-110 origin-bottom"
+            >
+              Servicios
+            </Link>
+
             </li>
 
             <li>
@@ -243,7 +244,7 @@ export default function Navbar() {
           {/* Boton register */}
           <div className="flex gap-4 w-full justify-center">
             <Link
-              to="/register"
+              to="/registro"
               className="bg-[#f0d437] text-white font-bold px-6 py-2 rounded-lg text-lg transition-colors duration-300 hover:bg-[#233947] text-stroke-black"
             >
               Registrarme

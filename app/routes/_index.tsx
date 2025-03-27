@@ -4,6 +4,7 @@ import Footer from "~/components/Footer";
 import Home from "~/components/Home";
 import HomeOpportunities from "~/components/HomeOpportunities";
 import HomeServices from "~/components/HomeServices";
+import '~/tailwind.css';
 
 export const meta: MetaFunction = () => {
   return [{ title: "Antivirus" }];

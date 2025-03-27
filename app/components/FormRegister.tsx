@@ -1,18 +1,32 @@
 import { useForm } from "react-hook-form";
 import { useState } from "react";
-import { EyeIcon, EyeOffIcon, PhoneIcon, MailIcon, UserIcon, CakeIcon, KeyIcon, ShieldCheckIcon } from "lucide-react"
+import { EyeIcon, EyeOffIcon, PhoneIcon, MailIcon, UserIcon, CakeIcon, KeyIcon, ShieldCheckIcon } from "lucide-react";
 
+// Definimos la interfaz para los valores del formulario
+type FormValues = {
+    nombre: string;
+    celular: string;
+    nacimiento: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+    codigo?: string;
+};
 
-const FormRegister = ({ handleRocketLaunch }) => {
-    const { register, handleSubmit, formState: { errors }, watch } = useForm();
-    const [showPassword, setShowPassword] = useState({
+// Definimos la interfaz para los props del componente
+interface FormRegisterProps {
+    handleRocketLaunch: () => void;
+}
+
+const FormRegister: React.FC<FormRegisterProps> = ({ handleRocketLaunch }) => {
+    const { register, handleSubmit, formState: { errors }, watch } = useForm<FormValues>();
+    const [showPassword, setShowPassword] = useState<{ password: boolean; confirmPassword: boolean; }>({
         password: false,
         confirmPassword: false,
     });
-
-    const [message, setMessage] = useState({ text: "", type: "" });
+    const [message, setMessage] = useState<{ text: string; type: string; }>({ text: "", type: "" });
     const [isSubmitting, setIsSubmitting] = useState(false);
-
+    
     const formFields = [
         { id: "nombre", label: "Nombre", placeholder: "Nombre", type: "text", icon: <UserIcon className="w-5 h-5 text-gray-500" /> },
         { id: "celular", label: "Celular", placeholder: "1234567890", type: "text", icon: <PhoneIcon className="w-5 h-5 text-gray-500" /> },
@@ -22,179 +36,86 @@ const FormRegister = ({ handleRocketLaunch }) => {
         { id: "confirmPassword", label: "Confirma tu contraseña", placeholder: "***********", type: "password", showEye: true, icon: <KeyIcon className="w-5 h-5 text-gray-500" /> },
         { id: "codigo", label: "Código de administrador (opcional)", placeholder: "Código", type: "text", icon: <ShieldCheckIcon className="w-5 h-5 text-gray-500" /> }
     ];
-    const onSubmit = async (data) => {
-
+    
+    const onSubmit = async (data: FormValues) => {
         setMessage({ text: "", type: "" });
         setIsSubmitting(true);
 
-        // Validación del código para asignar el rol de administrador
-        //TODO: lo debo guardo en las variables de entorno
+        // Asignamos el rol según el código ingresado
         const rol = data.codigo === "123456789" ? "admin" : "user";
 
-        const fechaNacimiento = new Date(data.nacimiento as string);
         const user = {
             name: data.nombre,
             email: data.email,
             password: data.password,
-            rol: rol,
+            rol,
             celular: data.celular,
-            fechaNacimiento: fechaNacimiento.toISOString(),
+            fechaNacimiento: new Date(data.nacimiento).toISOString(),
         };
 
         try {
             const response = await fetch("http://localhost:5261/api/auth/register", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(user),
             });
 
-            // Verifica si la respuesta es exitosa
             if (response.ok) {
-                const data = await response.json();
                 setMessage({ text: "Usuario registrado correctamente", type: "success" });
                 handleRocketLaunch();
             } else {
-                // Si la respuesta no es ok, manejar el error
-                const errorText = await response.text(); // Leemos la respuesta como texto
-
-                if (response.status === 500) {
-                    // Si el error es 500, mostrar el mensaje de error
-                    setMessage({ text: errorText || "Ocurrió un error interno en el servidor", type: "error" });
-                } else if (response.status === 409) {
-                    // Si el status es 409, significa que el email ya está registrado
-                    setMessage({ text: "El email ya está registrado", type: "error" });
-                } else {
-                    // Otros errores del servidor
-                    const errorData = await response.json();
-                    setMessage({ text: errorData.message || "Hubo un error al registrar el usuario", type: "error" });
-                }
+                const errorText = await response.text();
+                setMessage({ text: response.status === 409 ? "El email ya está registrado" : errorText || "Ocurrió un error", type: "error" });
             }
-        } catch (error) {
-            // Error en la solicitud (conexión, tiempo de espera, etc.)
+        } catch {
             setMessage({ text: "Ocurrió un error al registrar el usuario", type: "error" });
         } finally {
             setIsSubmitting(false);
-            setTimeout(() => {
-                setMessage({ text: "", type: "" });
-            }, 4000)
+            setTimeout(() => setMessage({ text: "", type: "" }), 4000);
         }
     };
 
-    const togglePasswordVisibility = (field: string) => {
-        setShowPassword((prevState) => ({
-            ...prevState,
-            [field]: !prevState[field as keyof typeof prevState],
-        }));
-    };
-    const password = watch("password");
     return (
         <>
             {message.text && (
-                <div
-                    className={`${message.type === "success"
-                        ? "bg-green-100 border-green-500 text-green-700"
-                        : "bg-red-100 border-red-500 text-red-700"
-                        } border-l-4 p-4 rounded-md shadow-md mb-4 transition-all duration-300 ease-in-out transform hover:scale-105`}
-                >
+                <div className={`border-l-4 p-4 rounded-md shadow-md mb-4 transition-all duration-300 ease-in-out ${message.type === "success" ? "bg-green-100 border-green-500 text-green-700" : "bg-red-100 border-red-500 text-red-700"}`}>
                     {message.text}
                 </div>
             )}
-            <form method="post" onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
                 {formFields.map((field) => (
-                    <div key={field.id} className={`flex items-center bg-[#ebebeb]  p-3 rounded-lg space-x-2 ${errors[field.id] ? "bg-red-50 border border-red-300 text-red-700" : ""}`}>
+                    <div key={field.id} className={`flex items-center bg-gray-100 p-3 rounded-lg space-x-2 ${errors[field.id as keyof FormValues] ? "bg-red-50 border border-red-300 text-red-700" : ""}`}>
                         <div className="flex-1">
                             <span>{field.icon}</span>
-                            <label htmlFor={field.id} className="block text-xs text-black">
-                                {field.label}
-                            </label>
+                            <label htmlFor={field.id} className="block text-xs text-black">{field.label}</label>
                             <input
-                                // validacion que el campo sea un email valido
-                                {...register(field.id, {
+                                {...register(field.id as keyof FormValues, {
                                     required: field.id !== "codigo" && "Este campo es obligatorio",
-                                    pattern: field.id === "email" && {
-                                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                                        message: "El email no es válido",
-                                    },
-                                    // validacion que la contraseña tenga 6 caracteres
-                                    ...field.id === "password" && {
-                                        minLength: field.id === "password" && {
-                                            value: 6,
-                                            message: "La contraseña debe tener al menos 6 caracteres",
-                                        },
-                                    },
-                                    // validacion que sea 10 digitos para el celular
-                                    ...field.id === "celular" && {
-                                        minLength: field.id === "celular" && {
-                                            value: 10,
-                                            message: "El celular debe tener 10 dígitos",
-
-                                        },
-                                    },
-                                    // validacion que sea la misma contraseña
-                                    ...field.id === "confirmPassword" && {
-                                        validate: field.id === "confirmPassword" && {
-                                            value: (value) => value === password || "Las contraseñas no coinciden",
-                                        }
-                                    },
-                                    // Validacion solo numeros
-                                    ...field.id === "celular" && {
-                                        validate: field.id === "celular" && {
-                                            value: (value) =>
-                                                /^[0-9]{10}$/.test(value) || "El celular debe contener solo 10 dígitos numéricos",
-                                        },
-                                    }
+                                    pattern: field.id === "email" ? { value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i, message: "El email no es válido" } : undefined,
+                                    minLength: field.id === "password" ? { value: 6, message: "La contraseña debe tener al menos 6 caracteres" } : undefined,
+                                    validate: field.id === "confirmPassword" ? (value) => value === watch("password") || "Las contraseñas no coinciden" : undefined,
                                 })}
-                                type={field.type === "date"
-                                    ? "date"
-                                    : field.showEye && showPassword[field.id]
-                                        ? "text"
-                                        : field.type}
+                                type={field.showEye ? (showPassword[field.id as "password" | "confirmPassword"] ? "text" : "password") : field.type}
                                 name={field.id}
                                 id={field.id}
                                 placeholder={field.placeholder}
                                 className="w-full bg-transparent text-black font-bold text-base outline-none"
-                                onClick={(e) => e.target.showPicker()}
                             />
-                            {errors[field.id] && <span className="text-red-500 text-xs">{errors[field.id]?.message}</span>}
+                            {errors[field.id as keyof FormValues] && <span className="text-red-500 text-xs">{errors[field.id as keyof FormValues]?.message}</span>}
                         </div>
                         {field.showEye && (
-                            <button
-                                type="button"
-                                onClick={() => togglePasswordVisibility(field.id)}
-                                className="focus:outline-none"
-                            >
-                                {showPassword[field.id] ? (
-                                    <EyeOffIcon className="w-5 h-5 text-gray-500 cursor-pointer" />
-                                ) : (
-                                    <EyeIcon className="w-5 h-5 text-gray-500 cursor-pointer" />
-                                )}
+                            <button type="button" onClick={() => setShowPassword(prev => ({ ...prev, [field.id as "password" | "confirmPassword"]: !prev[field.id as "password" | "confirmPassword"] }))}>
+                                {showPassword[field.id as "password" | "confirmPassword"] ? <EyeOffIcon className="w-5 h-5 text-gray-500" /> : <EyeIcon className="w-5 h-5 text-gray-500" />}
                             </button>
                         )}
                     </div>
                 ))}
-                {message.text && (
-                    <div
-                        className={`${message.type === "success"
-                            ? "bg-green-100 border-green-500 text-green-700"
-                            : "bg-red-100 border-red-500 text-red-700"
-                            } border-l-4 p-4 rounded-md shadow-md mb-4 transition-all duration-300 ease-in-out transform hover:scale-105`}
-                    >
-                        {message.text}
-                    </div>
-                )}
-
-                {/* Botón de Envío */}
-                <button
-                    type="submit"
-                    className="w-full bg-[#faa307] text-white text-[25px] font-black py-4 rounded-lg"
-                >
-                    Crear Cuenta
+                <button type="submit" className="w-full bg-orange-500 text-white text-lg font-bold py-3 rounded-lg" disabled={isSubmitting}>
+                    {isSubmitting ? "Registrando..." : "Crear Cuenta"}
                 </button>
             </form>
         </>
-    )
-}
+    );
+};
 
 export default FormRegister;
