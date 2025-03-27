@@ -155,9 +155,9 @@ const FormRegister = ({ handleRocketLaunch }) => {
                                 id={field.id}
                                 placeholder={field.placeholder}
                                 className="w-full bg-transparent text-black font-bold text-base outline-none"
-                                onClick={(e) => e.target.showPicker()}
+                                onClick={(e) => (e.target as HTMLInputElement).showPicker()}
                             />
-                            {errors[field.id] && <span className="text-red-500 text-xs">{errors[field.id]?.message}</span>}
+                            {errors[field.id] && <span className="text-red-500 text-xs">{String(errors[field.id]?.message)}</span>}
                         </div>
                         {field.showEye && (
                             <button
