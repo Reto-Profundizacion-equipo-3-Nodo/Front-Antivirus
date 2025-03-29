@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { EyeIcon, EyeOffIcon, PhoneIcon, MailIcon, UserIcon, CakeIcon, KeyIcon, ShieldCheckIcon, RocketIcon } from "lucide-react"
 import { registerUser } from "~/services/authService";
 import { useNavigate } from "@remix-run/react";
+import { useForm } from "react-hook-form";
 
 interface FormData {
     codigo: string;
