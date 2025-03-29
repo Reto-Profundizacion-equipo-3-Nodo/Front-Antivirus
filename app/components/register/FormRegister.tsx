@@ -1,8 +1,9 @@
-import { useForm } from "react-hook-form";
+
 import { useState } from "react";
 import { EyeIcon, EyeOffIcon, PhoneIcon, MailIcon, UserIcon, CakeIcon, KeyIcon, ShieldCheckIcon } from "lucide-react"
 import { registerUser } from "~/services/authService";
 import { useNavigate } from "@remix-run/react";
+import { useForm } from "react-hook-form";
 
 interface FormData {
     codigo: string;
@@ -181,5 +182,6 @@ const FormRegister = () => {
         </>
     )
 }
+
 
 export default FormRegister;
