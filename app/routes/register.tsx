@@ -10,7 +10,7 @@ export default function Register() {
         {/* Capa de desenfoque */}
         <div className="absolute inset-0 bg-black opacity-40 backdrop-blur-sm"></div>
         {/* Card con Formulario y Login */}
-        <section className="max-w-7xl mx-auto px-6 z-10">
+        <section className="max-w-7xl mx-auto px-6 py-3 z-10">
           <div className="flex flex-col md:flex-row items-center justify-center space-y-6 md:space-y-0 md:space-x-6">
             {/* Card para Titulo,Login(google) y Formulario */}
             <div className="bg-white/30 backdrop-blur-md shadow-xl border border-white/20  p-6 w-full md:w-2/3">
@@ -44,7 +44,7 @@ export default function Register() {
                 <img
                   src="/Images/Cohete.png"
                   alt="Cohete"
-                  className="w-40 h-40 md:w-full md:h-full object-contain pt-[41rem]"
+                  className="w-full h-full md:w-full md:h-full object-contain"
                 />
               </div>
             </div>

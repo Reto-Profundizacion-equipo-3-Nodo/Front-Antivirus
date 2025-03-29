@@ -1,6 +1,6 @@
 
-import { useState } from "react";
-import { EyeIcon, EyeOffIcon, PhoneIcon, MailIcon, UserIcon, CakeIcon, KeyIcon, ShieldCheckIcon } from "lucide-react"
+import { useState, useEffect } from "react";
+import { EyeIcon, EyeOffIcon, PhoneIcon, MailIcon, UserIcon, CakeIcon, KeyIcon, ShieldCheckIcon, RocketIcon } from "lucide-react"
 import { registerUser } from "~/services/authService";
 import { useNavigate } from "@remix-run/react";
 import { useForm } from "react-hook-form";
@@ -22,6 +22,8 @@ const FormRegister = () => {
     });
     const [message, setMessage] = useState({ text: "", type: "" });
     const [isSubmitting, setIsSubmitting] = useState(false);
+    // loading ..
+    const [progress, setProgress] = useState(0);
 
     const formFields = [
         { id: "name", label: "Nombre", placeholder: "Nombre", type: "text", icon: <UserIcon className="w-5 h-5 text-gray-500" /> },
@@ -76,6 +78,15 @@ const FormRegister = () => {
             [field]: !prevState[field as keyof typeof prevState],
         }));
     };
+    useEffect(() => {
+        const totalCampos = formFields.filter(field => field.id !== "codigo").length; // Excluir código opcional
+        const camposLlenos = formFields.filter(field => field.id !== "codigo" && watch(field.id as keyof FormData)?.trim()).length;
+
+        // Calcular el porcentaje de progreso
+        const nuevoProgreso = (camposLlenos / totalCampos) * 100;
+        setProgress(nuevoProgreso);
+    }, formFields.map(field => watch(field.id as keyof FormData))); // 👈 Aquí observamos los campos del formulario
+
 
     const password = watch("password");
     return (
@@ -90,9 +101,20 @@ const FormRegister = () => {
                     {message.text}
                 </div>
             )}
+            {progress > 0 && (
+                <div className="flex flex-col items-center mb-4">
+                    <RocketIcon className="w-10 h-10 text-blue-500 animate-bounce" />
+                    <div className="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+                        <div
+                            className="bg-blue-500 h-2.5 rounded-full transition-all"
+                            style={{ width: `${progress}%` }}
+                        ></div>
+                    </div>
+                </div>
+            )}
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
                 {formFields.map((field) => (
-                    <div key={field.id} className={`flex items-center bg-[#ebebeb]  p-3 rounded-lg space-x-2 ${errors[field.id] ? "bg-red-50 border border-red-300 text-red-700" : ""}`}>
+                    <div key={field.id} className={`flex items-center bg-[#ebebeb]  p-3 rounded-lg space-x-2 ${errors[field.id as keyof FormData] ? "bg-red-50 border border-red-300 text-red-700" : ""}`}>
                         <div className="flex-1">
                             <span>{field.icon}</span>
                             <label htmlFor={field.id} className="block text-xs text-black">
@@ -100,12 +122,12 @@ const FormRegister = () => {
                             </label>
                             <input
                                 // validacion que el campo sea un email valido
-                                {...register(field.id, {
+                                {...register(field.id as keyof FormData, {
                                     required: field.id !== "codigo" && "Este campo es obligatorio",
-                                    pattern: field.id === "email" && {
+                                    pattern: field.id === "email" ? {
                                         value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                                         message: "El email no es válido",
-                                    },
+                                    } : undefined,
                                     // validacion que la contraseña tenga 6 caracteres
                                     ...field.id === "password" && {
                                         minLength: {
@@ -134,16 +156,16 @@ const FormRegister = () => {
                                 })}
                                 type={field.type === "date"
                                     ? "date"
-                                    : field.showEye && showPassword[field.id]
+                                    : field.showEye && showPassword[field.id as keyof typeof showPassword]
                                         ? "text"
                                         : field.type}
                                 name={field.id}
                                 id={field.id}
                                 placeholder={field.placeholder}
                                 className="w-full bg-transparent text-black font-bold text-base outline-none"
-                                onClick={(e) => e.target.showPicker()}
+                                onClick={(e) => (e.target as HTMLInputElement).showPicker()}
                             />
-                            {errors[field.id] && <span className="text-red-500 text-xs">{String(errors[field.id]?.message)}</span>}
+                            {errors[field.id as keyof FormData] && <span className="text-red-500 text-xs">{String(errors[field.id as keyof FormData]?.message)}</span>}
                         </div>
                         {field.showEye && (
                             <button
@@ -151,7 +173,7 @@ const FormRegister = () => {
                                 onClick={() => togglePasswordVisibility(field.id)}
                                 className="focus:outline-none"
                             >
-                                {showPassword[field.id] ? (
+                                {showPassword[field.id as keyof typeof showPassword] ? (
                                     <EyeOffIcon className="w-5 h-5 text-gray-500 cursor-pointer" />
                                 ) : (
                                     <EyeIcon className="w-5 h-5 text-gray-500 cursor-pointer" />
@@ -176,7 +198,7 @@ const FormRegister = () => {
                     type="submit"
                     className="w-full bg-[#faa307] text-white text-[25px] font-black py-4 rounded-lg"
                 >
-                    Crear Cuenta
+                    {isSubmitting ? "Registrando..." : "Crear Cuenta"}
                 </button>
             </form>
         </>
