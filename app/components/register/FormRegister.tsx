@@ -1,20 +1,29 @@
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { EyeIcon, EyeOffIcon, PhoneIcon, MailIcon, UserIcon, CakeIcon, KeyIcon, ShieldCheckIcon } from "lucide-react"
+import { registerUser } from "~/services/authService";
+import { useNavigate } from "@remix-run/react";
 
-
-const FormRegister = ({ handleRocketLaunch }) => {
-    const { register, handleSubmit, formState: { errors }, watch } = useForm();
+interface FormData {
+    codigo: string;
+    nacimiento: string;
+    name: string;
+    email: string;
+    password: string;
+    celular: string;
+}
+const FormRegister = () => {
+    const navigate = useNavigate();
+    const { register, handleSubmit, formState: { errors }, watch } = useForm<FormData>();
     const [showPassword, setShowPassword] = useState({
         password: false,
         confirmPassword: false,
     });
-
     const [message, setMessage] = useState({ text: "", type: "" });
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const formFields = [
-        { id: "nombre", label: "Nombre", placeholder: "Nombre", type: "text", icon: <UserIcon className="w-5 h-5 text-gray-500" /> },
+        { id: "name", label: "Nombre", placeholder: "Nombre", type: "text", icon: <UserIcon className="w-5 h-5 text-gray-500" /> },
         { id: "celular", label: "Celular", placeholder: "1234567890", type: "text", icon: <PhoneIcon className="w-5 h-5 text-gray-500" /> },
         { id: "nacimiento", label: "Día de nacimiento", placeholder: "DD/MM/AAAA", type: "date", icon: <CakeIcon className="w-5 h-5 text-gray-500" /> },
         { id: "email", label: "Email", placeholder: "example@gmail.com", icon: <MailIcon className="w-5 h-5 text-gray-500" /> },
@@ -22,7 +31,7 @@ const FormRegister = ({ handleRocketLaunch }) => {
         { id: "confirmPassword", label: "Confirma tu contraseña", placeholder: "***********", type: "password", showEye: true, icon: <KeyIcon className="w-5 h-5 text-gray-500" /> },
         { id: "codigo", label: "Código de administrador (opcional)", placeholder: "Código", type: "text", icon: <ShieldCheckIcon className="w-5 h-5 text-gray-500" /> }
     ];
-    const onSubmit = async (data) => {
+    const onSubmit = async (data: { codigo: string; nacimiento: string; name: any; email: any; password: any; celular: any; }) => {
 
         setMessage({ text: "", type: "" });
         setIsSubmitting(true);
@@ -33,7 +42,7 @@ const FormRegister = ({ handleRocketLaunch }) => {
 
         const fechaNacimiento = new Date(data.nacimiento as string);
         const user = {
-            name: data.nombre,
+            name: data.name,
             email: data.email,
             password: data.password,
             rol: rol,
@@ -42,43 +51,21 @@ const FormRegister = ({ handleRocketLaunch }) => {
         };
 
         try {
-            const response = await fetch("http://localhost:5261/api/auth/register", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(user),
-            });
-
-            // Verifica si la respuesta es exitosa
-            if (response.ok) {
-                const data = await response.json();
+            const response = await registerUser(user);
+            if (response.token) {
                 setMessage({ text: "Usuario registrado correctamente", type: "success" });
-                handleRocketLaunch();
-            } else {
-                // Si la respuesta no es ok, manejar el error
-                const errorText = await response.text(); // Leemos la respuesta como texto
-
-                if (response.status === 500) {
-                    // Si el error es 500, mostrar el mensaje de error
-                    setMessage({ text: errorText || "Ocurrió un error interno en el servidor", type: "error" });
-                } else if (response.status === 409) {
-                    // Si el status es 409, significa que el email ya está registrado
-                    setMessage({ text: "El email ya está registrado", type: "error" });
-                } else {
-                    // Otros errores del servidor
-                    const errorData = await response.json();
-                    setMessage({ text: errorData.message || "Hubo un error al registrar el usuario", type: "error" });
-                }
+                document.cookie = `token=${response.token}; path=/`;
+                return navigate("/");
             }
         } catch (error) {
-            // Error en la solicitud (conexión, tiempo de espera, etc.)
-            setMessage({ text: "Ocurrió un error al registrar el usuario", type: "error" });
+            if ((error as any).message === "El email ya está registrado.") {
+                setMessage({ text: "El email ya está registrado. Por favor, usa otro.", type: "error" });
+            } else {
+                setMessage({ text: (error as Error).message, type: "error" });
+            }
         } finally {
             setIsSubmitting(false);
-            setTimeout(() => {
-                setMessage({ text: "", type: "" });
-            }, 4000)
+            setTimeout(() => setMessage({ text: "", type: "" }), 4000);
         }
     };
 
@@ -88,6 +75,7 @@ const FormRegister = ({ handleRocketLaunch }) => {
             [field]: !prevState[field as keyof typeof prevState],
         }));
     };
+
     const password = watch("password");
     return (
         <>
@@ -101,7 +89,7 @@ const FormRegister = ({ handleRocketLaunch }) => {
                     {message.text}
                 </div>
             )}
-            <form method="post" onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
                 {formFields.map((field) => (
                     <div key={field.id} className={`flex items-center bg-[#ebebeb]  p-3 rounded-lg space-x-2 ${errors[field.id] ? "bg-red-50 border border-red-300 text-red-700" : ""}`}>
                         <div className="flex-1">
@@ -119,14 +107,14 @@ const FormRegister = ({ handleRocketLaunch }) => {
                                     },
                                     // validacion que la contraseña tenga 6 caracteres
                                     ...field.id === "password" && {
-                                        minLength: field.id === "password" && {
+                                        minLength: {
                                             value: 6,
                                             message: "La contraseña debe tener al menos 6 caracteres",
                                         },
                                     },
                                     // validacion que sea 10 digitos para el celular
                                     ...field.id === "celular" && {
-                                        minLength: field.id === "celular" && {
+                                        minLength: {
                                             value: 10,
                                             message: "El celular debe tener 10 dígitos",
 
@@ -134,17 +122,14 @@ const FormRegister = ({ handleRocketLaunch }) => {
                                     },
                                     // validacion que sea la misma contraseña
                                     ...field.id === "confirmPassword" && {
-                                        validate: field.id === "confirmPassword" && {
-                                            value: (value) => value === password || "Las contraseñas no coinciden",
-                                        }
+                                        validate: (value) => value === password || "Las contraseñas no coinciden",
+
                                     },
                                     // Validacion solo numeros
                                     ...field.id === "celular" && {
-                                        validate: field.id === "celular" && {
-                                            value: (value) =>
-                                                /^[0-9]{10}$/.test(value) || "El celular debe contener solo 10 dígitos numéricos",
-                                        },
-                                    }
+                                        validate: (value) =>
+                                            /^[0-9]{10}$/.test(value) || "El celular debe contener solo 10 dígitos numéricos",
+                                    },
                                 })}
                                 type={field.type === "date"
                                     ? "date"
