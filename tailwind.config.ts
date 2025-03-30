@@ -1,7 +1,8 @@
 import type { Config } from "tailwindcss";
+import typography from "@tailwindcss/typography";
 
-export default {
-  content: ["./app/**/{**,.client,.server}/**/*.{js,jsx,ts,tsx}"],
+const config: Config = {
+  content: ["./app/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
       fontFamily: {
@@ -15,5 +16,7 @@ export default {
       },
     },
   },
-  plugins: [require("@tailwindcss/typography")],
-} satisfies Config;
+  plugins: [typography],
+};
+
+export default config;
