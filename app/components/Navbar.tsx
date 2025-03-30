@@ -36,7 +36,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-gradient-to-b from-[#283E51] to-[#4B79A1] dark:bg-[#172a41] text-white py-2 px-10 flex justify-between items-center relative">
+    <nav className="bg-gradient-to-b from-[#283E51] to-[#4B79A1] dark:bg-[#172a41] text-white py-2 px-10 flex justify-between items-center relative z-50">
       {/* Logo */}
       <div className="h-16 flex items-center pl-4">
         <img

@@ -91,29 +91,253 @@
   margin-bottom: 15px;
 }
 
-/* Estilos para los inputs */
-input[type="email"], input[type="password"] {
-    width: 100%;
-    padding: 12px 15px 12px 40px;
-    border: 1px solid #708BC6;
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.7);
-    font-size: 16px;
-    outline: none;
-    transition: all 0.3s ease;
+/* Estilos de los campos de entrada */
+.inputContainer input {
+  width: 100%;
+  padding: 12px 15px 12px 40px;
+  border: 1px solid #708BC6;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.7);
+  font-size: 16px;
+  outline: none;
+  transition: all 0.3s ease;
 }
 
-/* Estilos para los botones */
-.btn-google, .btn-facebook {
-    background: #FFBA08;
-    color: #222D56;
-    padding: 12px;
-    border-radius: 6px;
-    font-weight: bold;
-    transition: background 0.3s;
-    cursor: pointer;
+/* Iconos dentro de los inputs */
+.icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #708BC6;
+  font-size: 18px;
 }
 
-.btn-google:hover, .btn-facebook:hover {
-    background: #E0A007;
+/* Botón para mostrar/ocultar contraseña */
+.togglePassword {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: #708BC6;
+}
+
+/* Botón de inicio de sesión */
+.loginButton {
+  width: 100%;
+  padding: 10px 90px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: clamp(0.8rem, 2.5vw, 1rem);
+  color: white;
+  border: none;
+  cursor: pointer;
+  margin-top: 10px;
+  background: rgba(250, 204, 21, 0.8); /* Aumenta opacidad para mejor visibilidad */
+  box-shadow: 0px 4px 10px rgba(250, 204, 21, 0.5);
+  transition: all 0.3s ease-in-out;
+}
+
+/* Hover con profundidad y más contraste */
+.loginButton:hover {
+  background: rgba(250, 204, 21, 1);
+  box-shadow: 0px 6px 15px rgba(250, 204, 21, 0.6);
+  transform: translateY(-2px);
+}
+
+/* Efecto al hacer clic */
+.loginButton:active {
+  transform: translateY(1px);
+  box-shadow: 0px 2px 5px rgba(250, 204, 21, 0.4);
+}
+
+
+/* Enlace para recuperar contraseña */
+.recoverLink {
+  display: block;
+  margin-top: 10px;
+  color: #222D56;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.recoverLink:hover {
+  text-decoration: underline;
+}
+
+/* Botones de redes sociales */
+.googleButton, .facebookButton {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 15px;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.googleButton {
+  background: #ffffff;
+  border: 1px solid #ccc;
+  color: #222;
+}
+
+.googleButton:hover {
+  background: #f1f1f1;
+}
+
+.facebookButton {
+  background: #1877F2;
+  color: white;
+  border: none;
+}
+
+.facebookButton:hover {
+  background: #165dbb;
+}
+
+/* Opciones adicionales */
+.options {
+  display: flex;
+  justify-content: space-between; /* Separa "Recordarme" y "Olvidé mi contraseña" */
+  align-items: center; /* Asegura alineación vertical */
+  width: 100%;
+  font-size: 12px;
+  margin-top: 10px;
+}
+
+/* Contenedor para alinear checkbox y texto */
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Estilos personalizados para el checkbox */
+.checkbox {
+  inline-size: 16px;  
+  block-size: 16px;  
+  appearance: none; /* Elimina los estilos predeterminados del navegador */
+  border: 2px solid #222D56;
+  border-radius: 3px;
+  cursor: pointer;
+  background-color: white;
+  transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out;
+  margin-right: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Estilos cuando está marcado */
+.checkbox:checked {
+  background-color: #222D56;
+  border-color: #222D56;
+}
+
+/* Animación de pulsación */
+.checkbox:active {
+  transform: scale(0.9);
+}
+
+/* Icono de check */
+.checkbox:checked::after {
+  content: "";
+  inline-size: 12px;
+  block-size: 12px;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'%3e%3cpath d='M20.285 6.707a1 1 0 0 0-1.414-1.414L9 15.172l-4.293-4.293a1 1 0 1 0-1.414 1.414l5 5a1 1 0 0 0 1.414 0l11-11z'/%3e%3c/svg%3e");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+/* Estilo para el texto */
+.checkbox-label {
+  font-size: 11px;
+  color: #222D56;
+  cursor: pointer;
+}
+
+/* Ajustar el label del checkbox */
+.checkboxLabel {
+  display: flex;
+  align-items: center;  /* Asegura alineación con el texto */
+  gap: 3px; /* Espacio entre el checkbox y el texto */
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* Ajuste del enlace */
+.link {
+  font-size: 14px;
+  color: #222D56;
+  font-weight: bold;
+  text-decoration:none ;
+  align-self: center; /* Asegura alineación vertical */
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+ /* Estilos para Registrate */
+ .registerText {
+  display: flex;
+  justify-content: center; /* Centra horizontalmente */
+  align-items: center; /* Centra verticalmente (en caso de que haya más contenido) */
+  text-align: center;
+  font-size: 15px;
+  margin-top: 10px;
+  width: 100%;
+}
+
+.registerText a {
+  color: #32526E;
+  font-weight: bold;
+  text-decoration: none;
+  margin-left: 7px; /* Espacio entre el texto y el enlace */
+}
+
+.registerText a:hover {
+  text-decoration: underline;
+}
+
+ /* Estilos para Registrate */
+ .registerText {
+  display: flex;
+  justify-content: center; /* Centra horizontalmente */
+  align-items: center; /* Centra verticalmente (en caso de que haya más contenido) */
+  text-align: center;
+  font-size: 15px;
+  margin-top: 10px;
+  width: 100%;
+}
+
+.registerText a {
+  color: #222D56;
+  font-weight: bold;
+  text-decoration: none;
+  margin-left: 7px; /* Espacio entre el texto y el enlace */
+}
+
+/* Ajustes responsivos: Ocultar Javi en pantallas pequeñas */
+@media (max-width: 768px) {
+  .imageContainer {
+      display: none;
+  }
+  .formContainer {
+      width: 100%;
+      max-width: 90%;
+  }
+  .loginCard {
+      flex-direction: column;
+      padding: 2rem;
+  }
 }
