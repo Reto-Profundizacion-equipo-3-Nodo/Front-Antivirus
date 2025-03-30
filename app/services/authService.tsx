@@ -1,3 +1,6 @@
+import { request } from "node:http";
+import { tokenCookie } from "~/utils/cookies";
+
 // authService.ts
 interface RegisterUserData {
     name: string;
@@ -83,24 +86,28 @@ export const loginUser = async (email: string, password: string): Promise<AuthRe
 
 /**
  * Verifica si el token es válido
- * @param {string} token - Token JWT
+ * @param {Request} request - Petición HTTP
  * @returns {Promise<{isValid: boolean}>} - Información sobre la validez del token
  */
-export const verifyToken = async (token: string): Promise<{ isValid: boolean }> => {
+export const verifyToken = async (request: Request) => {
     try {
-        const response = await fetch("http://localhost:5261/api/Auth/verify-token", {
-            method: "GET",
-            headers: {
-                "Authorization": `Bearer ${token}`,
-            },
-        });
-
-        if (!response.ok) {
+        const cookieHeader = request.headers.get("Cookie");
+        const token = await tokenCookie.parse(cookieHeader);
+        if (!token) {
             throw new Error("Token inválido");
         }
-
-        return { isValid: true }; // Devuelve información de validez
+        return { isValid: true };
     } catch (error) {
         return { isValid: false };
     }
 };
+// sesion out
+export const logoutUser = async () => {
+    return {
+        headers: {
+            "Set-Cookie": await tokenCookie.serialize("", { httpOnly: true, path: "/" }),
+        },
+    }
+};
+
+

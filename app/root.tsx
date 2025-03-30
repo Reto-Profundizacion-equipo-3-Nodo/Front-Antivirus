@@ -4,12 +4,23 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLoaderData,
 } from "@remix-run/react";
-import type { LinksFunction } from "@remix-run/node";
+import type { LinksFunction, LoaderFunction } from "@remix-run/node";
 
 import "./tailwind.css";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+// Removed incorrect import of 'request'
+import { verifyToken } from "./services/authService";
+
+
+export const loader: LoaderFunction = async ({ request }) => {
+  const isAuthenticated = await verifyToken(request);
+  return {
+    isAuthenticated,
+  };
+};
 
 export const links: LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -25,6 +36,7 @@ export const links: LinksFunction = () => [
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  const { isAuthenticated } = useLoaderData<{ isAuthenticated: boolean }>();
   return (
     <html lang="en">
       <head>
@@ -34,7 +46,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <Navbar />
+        <Navbar isAuthenticated={isAuthenticated} />
         {children}
         <Footer />
         <ScrollRestoration />

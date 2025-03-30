@@ -58,12 +58,12 @@ export default function Navbar() {
         </li>
 
         <li className="relative group">
-        <Link
-          to="/services"
-          className="hover:text-yellow-300 block pb-2 transform transition-all duration-300 hover:scale-110 origin-bottom"
-        >
-          Servicios
-        </Link>
+          <Link
+            to="/services"
+            className="hover:text-yellow-300 block pb-2 transform transition-all duration-300 hover:scale-110 origin-bottom"
+          >
+            Servicios
+          </Link>
 
         </li>
 
@@ -166,21 +166,18 @@ export default function Navbar() {
           aria-label={isOpen ? "Cerrar menú" : "Abrir menú"}
         >
           <span
-            className={`absolute left-0 w-full h-[2px] bg-white transition-all duration-300 ${
-              isOpen ? "top-1/2 -translate-y-1/2 rotate-45" : "top-0"
-            }`}
+            className={`absolute left-0 w-full h-[2px] bg-white transition-all duration-300 ${isOpen ? "top-1/2 -translate-y-1/2 rotate-45" : "top-0"
+              }`}
           ></span>
 
           <span
-            className={`absolute left-0 w-full h-[2px] bg-white transition-all duration-300 ${
-              isOpen ? "opacity-0" : "top-1/2 -translate-y-1/2 opacity-100"
-            }`}
+            className={`absolute left-0 w-full h-[2px] bg-white transition-all duration-300 ${isOpen ? "opacity-0" : "top-1/2 -translate-y-1/2 opacity-100"
+              }`}
           ></span>
 
           <span
-            className={`absolute left-0 w-full h-[2px] bg-white transition-all duration-300 ${
-              isOpen ? "bottom-1/2 translate-y-1/2 -rotate-45" : "bottom-0"
-            }`}
+            className={`absolute left-0 w-full h-[2px] bg-white transition-all duration-300 ${isOpen ? "bottom-1/2 translate-y-1/2 -rotate-45" : "bottom-0"
+              }`}
           ></span>
         </button>
       </div>
@@ -211,12 +208,12 @@ export default function Navbar() {
             </li>
 
             <li>
-            <Link
-              to="/services" // Cambiamos el ancla por la ruta correcta
-              className="hover:text-yellow-300 block pb-2 transform transition-all duration-300 hover:scale-110 origin-bottom"
-            >
-              Servicios
-            </Link>
+              <Link
+                to="/services" // Cambiamos el ancla por la ruta correcta
+                className="hover:text-yellow-300 block pb-2 transform transition-all duration-300 hover:scale-110 origin-bottom"
+              >
+                Servicios
+              </Link>
 
             </li>
 
