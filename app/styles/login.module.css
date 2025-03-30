@@ -1,26 +1,94 @@
-/* Fondo con imagen */
-.bgLogin {
-    position: relative;
-    min-height: 100vh;
-    background-image: url('/Images/Background.webp');
-    background-size: cover;
-    background-position: center;
+/* Contenedor principal del login */
+.loginContainer {
+  position: relative;
+  min-height: 100vh; /* Ocupa toda la altura de la pantalla */
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 4rem 1rem; /* Ajusta el espaciado */
+  background-image: url('/Images/Background.webp'); /* Imagen de fondo */
+  background-size: cover;
+  background-position: full;
+  backdrop-filter: blur(10px);
 }
 
-/* Capa de opacidad y desenfoque */
-.bgLogin::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    backdrop-filter: blur(6px);
-    background: rgba(0, 0, 0, 0.3);
-    z-index: 0;
+/* Capa de desenfoque adicional para mejorar legibilidad */
+.loginContainer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background-image: url('/Images/Background.webp'); /* Aplica la misma imagen */
+  background-size: cover;
+  background-position: center;
+  filter: blur(10px); /* Aplica desenfoque */
+  z-index: -1; /* Envía la capa al fondo */
 }
 
-/* Contenedor principal para que los elementos estén sobre el fondo */
-.bgLogin > * {
-    position: relative;
-    z-index: 10;
+/* Contenedor que agrupa la imagen de Javi y el formulario */
+.loginCard {
+  display: flex;
+  flex-direction: row; /* Acomoda los elementos en línea */
+  align-items: center;
+  justify-content: space-between;
+  width: 90%;
+  max-width: 800px; /* Ajusta el ancho máximo */
+  margin: auto;
+  background: rgba(255, 255, 255, 0.2); /* Fondo semitransparente */
+  border-radius: 16px;
+  padding: 20px;
+  backdrop-filter: blur(12px); /* Efecto vidrio */
+  border: 1px solid rgba(255, 255, 255, 0.3); /* Borde sutil */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra ligera */
+}
+
+/* Contenedor de la imagen de Javi */
+.imageContainer {
+  flex: 1; /* Ocupa el mismo espacio que el formulario */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.imageContainer img {
+  max-width: 100%;
+  height: auto; /* Mantiene la proporción */
+}
+
+/* Contenedor del formulario */
+.formContainer {
+  width: 50%;
+  max-width: 400px;
+}
+
+/* Ajuste para los elementos dentro del formulario */
+.form {
+  width: 100%;
+}
+
+/* Estilos del título */
+.title {
+  font-size: 1.7rem;
+  text-align: center;
+  font-weight: bold;
+  color: #222D56;
+  margin-bottom: 1rem;
+}
+
+.title span {
+  display: block;
+  font-size: 1.8rem;
+  color: #32526E;
+}
+
+/* Contenedor para los campos de entrada */
+.inputContainer {
+  position: relative;
+  margin-bottom: 15px;
 }
 
 /* Estilos para los inputs */
