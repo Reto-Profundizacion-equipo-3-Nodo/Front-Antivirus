@@ -105,7 +105,12 @@ export const verifyToken = async (request: Request) => {
 export const logoutUser = async () => {
     return {
         headers: {
-            "Set-Cookie": await tokenCookie.serialize("", { httpOnly: true, path: "/" }),
+            "Set-Cookie": await tokenCookie.serialize("", {
+                maxAge: 0,
+                expires: new Date(0),
+                path: "/",
+                httpOnly: true
+            }),
         },
     }
 };

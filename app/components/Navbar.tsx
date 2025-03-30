@@ -1,9 +1,9 @@
-import { Link } from "@remix-run/react";
+import { Form, Link } from "@remix-run/react";
 import { useState, useEffect, useRef } from "react";
 import { Sun, Moon, Search, User } from "lucide-react";
 
 
-export default function Navbar() {
+export default function Navbar({ isAuthenticated }: { isAuthenticated: boolean }) {
   // Estados
   const [isOpen, setIsOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -34,6 +34,7 @@ export default function Navbar() {
     setIsDarkMode(!isDarkMode);
     document.documentElement.classList.toggle("dark");
   };
+  console.log("Esta autenticado?", isAuthenticated)
 
   return (
     <nav className="bg-gradient-to-b from-[#283E51] to-[#4B79A1] dark:bg-[#172a41] text-white py-2 px-10 flex justify-between items-center relative">
@@ -50,7 +51,7 @@ export default function Navbar() {
       <ul className="hidden md:flex gap-16 font-bold text-lg">
         <li className="relative group">
           <Link
-            to="#inicio"
+            to="/"
             className="hover:text-yellow-300 block pb-2 transform transition-all duration-300 hover:scale-110 origin-bottom"
           >
             Inicio
@@ -126,19 +127,24 @@ export default function Navbar() {
           </button>
 
           {isUserMenuOpen && (
-            <div className="absolute right-0 top-10 bg-white bg-opacity-50 backdrop-blur-lg text-black shadow-md rounded-lg w-32">
-              <Link
-                to="/login"
-                className="block px-3 py-1.5 text-base hover:bg-yellow-300/60 transition-colors text-right"
-              >
-                Login
-              </Link>
-              <Link
-                to="/register"
-                className="block px-3 py-1.5 text-base hover:bg-yellow-300/60 transition-colors text-right"
-              >
-                Registrarme
-              </Link>
+            <div className="absolute right-0 top-10 bg-white bg-opacity-50 backdrop-blur-lg text-black shadow-md rounded-lg w-32 z-50">
+              {isAuthenticated ? (
+                <Form method="post" action="/logout" >
+                  <button type="submit"
+                    className="block px-3 py-1.5 text-base hover:bg-yellow-300/60 transition-colors text-right">
+                    Cerrar sesión
+                  </button>
+                </Form>
+              ) : (
+                <>
+                  <Link to="/login" className="block px-3 py-1.5 text-base hover:bg-yellow-300/60 transition-colors text-right">
+                    Iniciar sesión
+                  </Link>
+                  <Link to="/register" className="block px-3 py-1.5 text-base hover:bg-yellow-300/60 transition-colors text-right">
+                    Registrarme
+                  </Link>
+                </>
+              )}
             </div>
           )}
         </div>
@@ -184,7 +190,7 @@ export default function Navbar() {
 
       {/* Menú desplegable en móviles */}
       {isOpen && (
-        <div className="absolute top-full left-0 w-full bg-white text-black shadow-lg flex flex-col items-center p-4 gap-4 md:hidden">
+        <div className="absolute top-full left-0 w-full bg-white text-black shadow-lg flex flex-col items-center p-4 gap-4 md:hidden z-50">
           {/* Búsqueda */}
           <div className="flex items-center gap-2 bg-gray-200 p-2 rounded-md w-full max-w-xs">
             <Search size={20} />
@@ -199,7 +205,7 @@ export default function Navbar() {
           <ul className="flex flex-col gap-4 w-full text-center text-lg">
             <li>
               <Link
-                to="#inicio"
+                to="/"
                 className="block py-2 transition-colors duration-300 hover:text-[#708BC6]"
                 onClick={() => setIsOpen(false)}
               >

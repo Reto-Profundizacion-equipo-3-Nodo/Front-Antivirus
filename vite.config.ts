@@ -9,6 +9,9 @@ declare module "@remix-run/node" {
 }
 
 export default defineConfig({
+  define: {
+    "process.env": {}, // TODO:Evita el error en el navegador
+  },
   publicDir: "public",
   plugins: [
     remix({
