@@ -1,10 +1,13 @@
 //Importamos los módulos necesarios
 import { useState } from "react";
 import { Form, Link } from "@remix-run/react";
+import { json } from "@remix-run/node";
+import { ActionFunction } from "@remix-run/node";
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook, FaEnvelope, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
 import { motion } from "framer-motion";
 import styles from '../styles/login.module.css';
+import { createUserSession } from "~/utils/session.server";
 
 
 // Componente para la entrada de contraseña con opción de mostrar u ocultar
@@ -108,3 +111,20 @@ export default function LoginPage() {
     </div>
   );
 }
+
+
+export const action: ActionFunction = async ({ request }) => {
+  const formData = await request.formData();
+  const email = formData.get("email") as string;
+  const password = formData.get("password") as string;
+
+// Simulación de autentificación
+  if (email !== "admin@ejemplo.com" || password !== "123456") {
+    return json({ error: "Credenciales incorrectas" }, { status: 400 });
+  }
+
+  //Datos del usuario autentificado.
+  const user = { id: "1", email, role: "admin" };
+
+  return createUserSession({ request, user, redirectTo: "/dashboard" });
+};
