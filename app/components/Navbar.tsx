@@ -1,10 +1,25 @@
-import { Form, Link } from "@remix-run/react";
+import { Form, Link, useLocation } from "@remix-run/react";
 import { useState, useEffect, useRef } from "react";
 import { Sun, Moon, Search, User } from "lucide-react";
+import { jwtDecode } from "jwt-decode";
 
 
-export default function Navbar({ isAuthenticated }: { isAuthenticated: boolean }) {
+interface NavbarProps {
+  isAuthenticated: boolean;
+}
+
+interface UserData {
+  email: string;
+  avatarUrl?: string;
+  name: string;
+  role: string;
+}
+
+export default function Navbar({ isAuthenticated }: NavbarProps) {
+  const location = useLocation();
   // Estados
+  //estado que guarda los datos del usuario
+  const [currentUser, setCurrentUser] = useState<UserData | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
@@ -13,6 +28,38 @@ export default function Navbar({ isAuthenticated }: { isAuthenticated: boolean }
   const userMenuRef = useRef<HTMLDivElement>(null);
   const userButtonRef = useRef<HTMLButtonElement>(null);
 
+  // Obtener los datos del usuario al cargar la página
+  useEffect(() => {
+    setCurrentUser(getUserData());
+  }, [location]);
+  // Función para obtener los datos del usuario
+  const getUserData = (): UserData | null => {
+    if (typeof document === "undefined") return null;
+
+    // Buscar el token en las cookies
+    const token = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("token="))
+      ?.split("=")[1];
+
+    if (!token) return null;
+
+    try {
+      // Decodificar el token
+      //TODO: Guardar en env los decodificadores
+      const decoded: any = jwtDecode(token);
+      return {
+        name: decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"],
+        email: decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"],
+        role: decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"],
+        // cambiar esto para que busque el avatar
+        avatarUrl: decoded["avatarUrl"] || "https://api.dicebear.com/9.x/pixel-art/svg",
+      };
+    } catch (error) {
+      console.error("Error al decodificar el token", error);
+      return null;
+    }
+  };
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (!userMenuRef.current || !userButtonRef.current) return;
@@ -34,8 +81,8 @@ export default function Navbar({ isAuthenticated }: { isAuthenticated: boolean }
     setIsDarkMode(!isDarkMode);
     document.documentElement.classList.toggle("dark");
   };
-  console.log("Esta autenticado?", isAuthenticated)
 
+  console.log(currentUser)
   return (
     <nav className="bg-gradient-to-b from-[#283E51] to-[#4B79A1] dark:bg-[#172a41] text-white py-2 px-10 flex justify-between items-center relative z-50">
       {/* Logo */}
@@ -123,18 +170,37 @@ export default function Navbar({ isAuthenticated }: { isAuthenticated: boolean }
             className="hover:text-yellow-300 transition"
             onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
           >
-            <User className="w-6 h-6" />
+            {isAuthenticated ?
+              <img
+                src={currentUser?.avatarUrl}
+                alt="Avatar"
+                className="w-8 h-8 rounded-full border border-gray-300"
+              />
+              :
+              <User className="w-6 h-6" />
+            }
           </button>
 
           {isUserMenuOpen && (
             <div className="absolute right-0 top-10 bg-white bg-opacity-50 backdrop-blur-lg text-black shadow-md rounded-lg w-32 z-50">
               {isAuthenticated ? (
-                <Form method="post" action="/logout" >
-                  <button type="submit"
-                    className="block px-3 py-1.5 text-base hover:bg-yellow-300/60 transition-colors text-right">
-                    Cerrar sesión
-                  </button>
-                </Form>
+                <>
+                  <div className="px-3 py-1.5 text-base text-right font-semibold">
+                    {currentUser?.name}
+                  </div>
+                  <div className="px-3 py-1.5 text-base text-right font-semibold">
+                    {currentUser?.email}
+                  </div>
+                  <div className="px-3 py-1.5 text-base text-right font-semibold">
+                    {currentUser?.role}
+                  </div>
+                  <Form method="post" action="/logout" >
+                    <button type="submit"
+                      className="block px-3 py-1.5 text-base hover:bg-yellow-300/60 transition-colors text-right">
+                      Cerrar sesión
+                    </button>
+                  </Form>
+                </>
               ) : (
                 <>
                   <Link to="/login" className="block px-3 py-1.5 text-base hover:bg-yellow-300/60 transition-colors text-right">
@@ -151,11 +217,12 @@ export default function Navbar({ isAuthenticated }: { isAuthenticated: boolean }
       </div>
 
       {/* Iconos pantalla pequeña */}
-      <div className="flex md:hidden items-center gap-4">
+      < div className="flex md:hidden items-center gap-4" >
         <button onClick={toggleTheme}>
           {isDarkMode ? <Sun size={24} /> : <Moon size={24} />}
         </button>
 
+        {/* TODO falta implementar la autenticacion para pantallas pequeñas */}
         <div className="flex gap-4 w-full justify-center">
           <Link
             to="/login"
@@ -189,72 +256,74 @@ export default function Navbar({ isAuthenticated }: { isAuthenticated: boolean }
       </div>
 
       {/* Menú desplegable en móviles */}
-      {isOpen && (
-        <div className="absolute top-full left-0 w-full bg-white text-black shadow-lg flex flex-col items-center p-4 gap-4 md:hidden z-50">
-          {/* Búsqueda */}
-          <div className="flex items-center gap-2 bg-gray-200 p-2 rounded-md w-full max-w-xs">
-            <Search size={20} />
-            <input
-              type="text"
-              placeholder="Buscar"
-              className="bg-transparent outline-none w-full"
-            />
+      {
+        isOpen && (
+          <div className="absolute top-full left-0 w-full bg-white text-black shadow-lg flex flex-col items-center p-4 gap-4 md:hidden z-50">
+            {/* Búsqueda */}
+            <div className="flex items-center gap-2 bg-gray-200 p-2 rounded-md w-full max-w-xs">
+              <Search size={20} />
+              <input
+                type="text"
+                placeholder="Buscar"
+                className="bg-transparent outline-none w-full"
+              />
+            </div>
+
+            {/* Opcione menú */}
+            <ul className="flex flex-col gap-4 w-full text-center text-lg">
+              <li>
+                <Link
+                  to="/"
+                  className="block py-2 transition-colors duration-300 hover:text-[#708BC6]"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Inicio
+                </Link>
+              </li>
+
+              <li>
+                <Link
+                  to="/services" // Cambiamos el ancla por la ruta correcta
+                  className="hover:text-yellow-300 block pb-2 transform transition-all duration-300 hover:scale-110 origin-bottom"
+                >
+                  Servicios
+                </Link>
+
+              </li>
+
+              <li>
+                <Link
+                  to="#oportunidades"
+                  className="block py-2 transition-colors duration-300 hover:text-[#708BC6]"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Oportunidades
+                </Link>
+              </li>
+
+              <li>
+                <Link
+                  to="/novedades"
+                  className="block py-2 transition-colors duration-300 hover:text-[#708BC6]"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Novedades
+                </Link>
+              </li>
+            </ul>
+
+            {/* Boton register */}
+            <div className="flex gap-4 w-full justify-center">
+              <Link
+                to="/register"
+                className="bg-[#f0d437] text-white font-bold px-6 py-2 rounded-lg text-lg transition-colors duration-300 hover:bg-[#233947] text-stroke-black"
+              >
+                Registrarme
+              </Link>
+            </div>
           </div>
-
-          {/* Opcione menú */}
-          <ul className="flex flex-col gap-4 w-full text-center text-lg">
-            <li>
-              <Link
-                to="/"
-                className="block py-2 transition-colors duration-300 hover:text-[#708BC6]"
-                onClick={() => setIsOpen(false)}
-              >
-                Inicio
-              </Link>
-            </li>
-
-            <li>
-              <Link
-                to="/services" // Cambiamos el ancla por la ruta correcta
-                className="hover:text-yellow-300 block pb-2 transform transition-all duration-300 hover:scale-110 origin-bottom"
-              >
-                Servicios
-              </Link>
-
-            </li>
-
-            <li>
-              <Link
-                to="#oportunidades"
-                className="block py-2 transition-colors duration-300 hover:text-[#708BC6]"
-                onClick={() => setIsOpen(false)}
-              >
-                Oportunidades
-              </Link>
-            </li>
-
-            <li>
-              <Link
-                to="/novedades"
-                className="block py-2 transition-colors duration-300 hover:text-[#708BC6]"
-                onClick={() => setIsOpen(false)}
-              >
-                Novedades
-              </Link>
-            </li>
-          </ul>
-
-          {/* Boton register */}
-          <div className="flex gap-4 w-full justify-center">
-            <Link
-              to="/register"
-              className="bg-[#f0d437] text-white font-bold px-6 py-2 rounded-lg text-lg transition-colors duration-300 hover:bg-[#233947] text-stroke-black"
-            >
-              Registrarme
-            </Link>
-          </div>
-        </div>
-      )}
-    </nav>
+        )
+      }
+    </nav >
   );
 }

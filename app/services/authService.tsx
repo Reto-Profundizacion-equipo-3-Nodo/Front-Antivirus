@@ -13,6 +13,8 @@ interface RegisterUserData {
 
 interface AuthResponse {
     token: string;
+    success?: boolean; // Optional property for success
+    message?: string;  // Optional property for message
 }
 
 interface ErrorResponse {
@@ -96,23 +98,68 @@ export const verifyToken = async (request: Request) => {
         if (!token) {
             throw new Error("Token inválido");
         }
-        return { isValid: true };
+        return true;
     } catch (error) {
-        return { isValid: false };
+        return false;
     }
 };
-// sesion out
-export const logoutUser = async () => {
-    return {
-        headers: {
-            "Set-Cookie": await tokenCookie.serialize("", {
-                maxAge: 0,
-                expires: new Date(0),
-                path: "/",
-                httpOnly: true
-            }),
-        },
+/**
+ * Servicio para cerrar la sesión del usuario
+ * @returns Promise<AuthResponse> - Respuesta con el estado del cierre de sesión
+ */
+export async function logout(): Promise<AuthResponse> {
+    try {
+        // Obtiene los datos del usuario almacenados en localStorage
+        const userData = localStorage.getItem("userData");
+        // Extrae el email del usuario, si no existe retorna cadena vacía
+        const email = userData ? JSON.parse(userData).email : "";
+
+        // Busca el token de autenticación en las cookies
+        const token = document.cookie
+            .split("; ") // Divide las cookies en un array
+            .find((row) => row.startsWith("token=")) // Busca la cookie que comienza con 'token='
+            ?.split("=")[1]; // Obtiene el valor del token
+
+        // Verifica si existe el token
+        if (!token) {
+            throw new Error("No authentication token found");
+        }
+
+        // Realiza la petición al servidor para cerrar sesión
+        const response = await fetch("http://localhost:5261/api/Auth/login/logout", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ email }),
+        });
+
+        // Verifica si la respuesta fue exitosa
+        if (!response.ok) {
+            throw new Error("Logout failed");
+        }
+
+        // Elimina el token de las cookies estableciendo una fecha expirada
+        // y estableciendo el path a la raíz del dominio
+        document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        // Elimina los datos del usuario del localStorage
+        localStorage.removeItem("userData");
+
+        // Retorna la respuesta del servidor
+        return {
+            success: true,
+            message: "Sesión cerrada exitosamente",
+            token: "",
+        };
+    } catch (error) {
+        // En caso de error, retorna un objeto con el estado de error
+        return {
+            success: false,
+            message: "Error al cerrar sesión",
+            token: "",
+        };
     }
-};
+}
 
 
