@@ -1,51 +1,325 @@
-/* Fondo con imagen */
-.bgLogin {
-    position: relative;
-    min-height: 100vh;
-    background-image: url('/Images/Background.webp');
-    background-size: cover;
-    background-position: center;
+/* Contenedor principal del login */
+.loginContainer {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 4rem 1rem;
+  background-image: none;
 }
 
-/* Capa de opacidad y desenfoque */
-.bgLogin::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    backdrop-filter: blur(6px);
-    background: rgba(0, 0, 0, 0.3);
-    z-index: 0;
+/* Capa de desenfoque */
+.loginContainer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%; /* Evita bordes desenfocados */
+  height: 110%;
+  background: url('/Images/Background.webp') center/cover no-repeat;
+  filter: blur(12px);
+  transform: scale(1.1); /* Soluciona el problema del borde */
+  z-index: 0;
 }
 
-/* Contenedor principal para que los elementos estén sobre el fondo */
-.bgLogin > * {
-    position: relative;
-    z-index: 10;
+/* Capa semitransparente */
+.loginContainer::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.3); /* Capa oscura con transparencia */
+  z-index: 1; /* Se coloca sobre la imagen de fondo pero debajo del contenido */
 }
 
-/* Estilos para los inputs */
-input[type="email"], input[type="password"] {
+/* Contenedor del login */
+.loginCard {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 90%;
+  max-width: 800px;
+  margin: auto;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  padding: 20px;
+  backdrop-filter: blur(13px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 2; /* La coloca sobre el fondo */
+}
+
+/* Imagen de Javi */
+.imageContainer {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.imageContainer img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Contenedor del formulario */
+.formContainer {
+  width: 50%;
+  max-width: 400px;
+}
+
+/* Título del formulario */
+.title {
+  font-size: 1.7rem;
+  text-align: center;
+  font-weight: bold;
+  color: #222D56;
+  margin-bottom: 1rem;
+}
+
+.title span {
+  display: block;
+  font-size: 1.8rem;
+  color: #32526E;
+}
+
+/* Inputs del formulario */
+.inputContainer {
+  position: relative;
+  margin-bottom: 15px;
+}
+
+.inputContainer input {
+  width: 100%;
+  padding: 12px 15px 12px 40px;
+  border: 1px solid #708BC6;
+  border-radius: 8px;
+  color: #322D56;
+  background: rgba(255, 255, 255, 0.7);
+  font-size: 16px;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+/* Iconos dentro de los inputs */
+.icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #708BC6;
+  font-size: 18px;
+}
+
+/* Botón de inicio de sesión */
+.loginButton {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 1rem;
+  color: white;
+  border: none;
+  cursor: pointer;
+  margin-top: 10px;
+  background: rgba(250, 204, 21, 0.8);
+  box-shadow: 0px 4px 10px rgba(250, 204, 21, 0.5);
+  transition: all 0.3s ease-in-out;
+}
+
+.loginButton:hover {
+  background: rgba(250, 204, 21, 1);
+  box-shadow: 0px 6px 15px rgba(250, 204, 21, 0.6);
+  transform: translateY(-2px);
+}
+
+.loginButton:active {
+  transform: translateY(1px);
+  box-shadow: 0px 2px 5px rgba(250, 204, 21, 0.4);
+}
+
+/* Opciones adicionales */
+.options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+
+ /* Estilos para Registrate */
+ .registerText {
+  display: flex;
+  justify-content: center; /* Centra horizontalmente */
+  align-items: center; /* Centra verticalmente (en caso de que haya más contenido) */
+  text-align: center;
+  font-size: 15px;
+  margin-top: 10px;
+  width: 100%;
+}
+
+.registerText a {
+  color: #32526E;
+  font-weight: bold;
+  text-decoration: none;
+  margin-left: 7px; /* Espacio entre el texto y el enlace */
+}
+
+.registerText a:hover {
+  text-decoration: underline;
+}
+
+/* Separador */
+.separator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  margin: 1rem auto;
+}
+
+.separator hr {
+  flex: 1;
+  border: none;
+  height: 1px;
+  background: #7C76B5;
+}
+
+.separator span {
+  white-space: nowrap;
+  font-weight: bold;
+  color: #708BC6;
+}
+
+/* Contenedor del checkbox */
+.checkboxLabel {
+  display: flex;
+  align-items: center; /* Asegura que el checkbox y el texto estén alineados */
+  gap: 6px; /* Espacio entre el checkbox y el texto */
+  font-size: 14px;
+  color: #222D56;
+  font-weight: bold;
+  cursor: pointer;
+  line-height: 1; /* Ajuste para evitar desajustes de altura */
+}
+
+/* Estilo del checkbox */
+.checkbox {
+  width: 14px;
+  height: 14px;
+  appearance: none;
+  border: 2px solid #32526E;
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: transparent;
+  transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Checkbox cuando está marcado */
+.checkbox:checked {
+  background-color: #32526E;
+  border-color: #32526E;
+}
+
+/* Icono de check dentro del checkbox */
+.checkbox:checked::after {
+  content: "";
+  width: 12px;
+  height: 12px;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3e%3cpath d='M20.285 6.707a1 1 0 0 0-1.414-1.414L9 15.172l-4.293-4.293a1 1 0 1 0-1.414 1.414l5 5a1 1 0 0 0 1.414 0l11-11z'/%3e%3c/svg%3e");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+/* Animación */
+.checkbox:active {
+  transform: scale(0.9);
+}
+
+.link {
+  font-size: 14px;
+  color: #222D56;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+/* Botón para mostrar/ocultar contraseña */
+.togglePassword {
+  position: absolute;
+  right: 10px; /* Ajustado para que no salga del input */
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: #708BC6;
+  pointer-events: auto; /* Permite que sea clickeable */
+}
+
+/* Ajuste de botones de redes sociales */
+.googleButton, .facebookButton {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 15px;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.googleButton {
+  background: #ffffff;
+  border: 1px solid #ccc;
+  color: #222;
+}
+
+.googleButton:hover {
+  background: #f1f1f1;
+}
+
+.facebookButton {
+  background: #1877F2;
+  color: white;
+  border: none;
+}
+
+.facebookButton:hover {
+  background: #165dbb;
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+  .imageContainer {
+    display: none;
+  }
+  .formContainer {
     width: 100%;
-    padding: 12px 15px 12px 40px;
-    border: 1px solid #708BC6;
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.7);
-    font-size: 16px;
-    outline: none;
-    transition: all 0.3s ease;
-}
-
-/* Estilos para los botones */
-.btn-google, .btn-facebook {
-    background: #FFBA08;
-    color: #222D56;
-    padding: 12px;
-    border-radius: 6px;
-    font-weight: bold;
-    transition: background 0.3s;
-    cursor: pointer;
-}
-
-.btn-google:hover, .btn-facebook:hover {
-    background: #E0A007;
+    max-width: 90%;
+  }
+  .loginCard {
+    flex-direction: column;
+    padding: 2rem;
+  }
 }

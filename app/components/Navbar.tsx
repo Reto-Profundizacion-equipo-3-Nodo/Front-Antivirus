@@ -1,10 +1,10 @@
 import { Link } from "@remix-run/react";
 import { useState, useEffect, useRef } from "react";
 import { Sun, Moon, Search, User } from "lucide-react";
-
+import useOnClickOutside from "../utils/useOnClickOutside";
 
 export default function Navbar() {
-  // Estados
+  // Estados()
   const [isOpen, setIsOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
@@ -13,23 +13,10 @@ export default function Navbar() {
   const userMenuRef = useRef<HTMLDivElement>(null);
   const userButtonRef = useRef<HTMLButtonElement>(null);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (!userMenuRef.current || !userButtonRef.current) return;
 
-      const target = event.target as Node;
-      const isClickInsideMenu = userMenuRef.current.contains(target);
-      const isClickOnButton = userButtonRef.current.contains(target);
-
-      if (!isClickInsideMenu && !isClickOnButton) {
-        setIsUserMenuOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
+  useOnClickOutside(userMenuRef, () => {
+    setIsUserMenuOpen(false);
+  });
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode);
     document.documentElement.classList.toggle("dark");
@@ -58,13 +45,12 @@ export default function Navbar() {
         </li>
 
         <li className="relative group">
-        <Link
-          to="/services"
-          className="hover:text-yellow-300 block pb-2 transform transition-all duration-300 hover:scale-110 origin-bottom"
-        >
-          Servicios
-        </Link>
-
+          <Link
+            to="/services"
+            className="hover:text-yellow-300 block pb-2 transform transition-all duration-300 hover:scale-110 origin-bottom"
+          >
+            Servicios
+          </Link>
         </li>
 
         <li className="relative group">
@@ -126,7 +112,10 @@ export default function Navbar() {
           </button>
 
           {isUserMenuOpen && (
-            <div className="absolute right-0 top-10 bg-white bg-opacity-50 backdrop-blur-lg text-black shadow-md rounded-lg w-32">
+            <div
+              className="absolute right-0 top-10 bg-white bg-opacity-50 backdrop-blur-lg text-black shadow-md rounded-lg w-32"
+              ref={userMenuRef}
+            >
               <Link
                 to="/login"
                 className="block px-3 py-1.5 text-base hover:bg-yellow-300/60 transition-colors text-right"
@@ -211,13 +200,12 @@ export default function Navbar() {
             </li>
 
             <li>
-            <Link
-              to="/services" // Cambiamos el ancla por la ruta correcta
-              className="hover:text-yellow-300 block pb-2 transform transition-all duration-300 hover:scale-110 origin-bottom"
-            >
-              Servicios
-            </Link>
-
+              <Link
+                to="/services" // Cambiamos el ancla por la ruta correcta
+                className="hover:text-yellow-300 block pb-2 transform transition-all duration-300 hover:scale-110 origin-bottom"
+              >
+                Servicios
+              </Link>
             </li>
 
             <li>
