@@ -161,7 +161,7 @@
 //         };
 //     }
 // }
-import { tokenCookie } from "~/utils/cookies";
+import { tokenCookie } from "../utils/cookies";
 
 interface RegisterUserData {
   name: string;
@@ -176,11 +176,15 @@ interface AuthResponse {
   token: string;
   success?: boolean;
   message?: string;
+  user?: any;
 }
 
 interface ErrorResponse {
   message: string;
 }
+
+// URL base para las llamadas a la API (Idealmente en una variable de entorno)
+const API_URL = "http://localhost:5261/api";
 
 /**
  * 🔹 Registra un usuario en la API
@@ -191,7 +195,7 @@ export const registerUser = async (
   userData: RegisterUserData
 ): Promise<AuthResponse> => {
   try {
-    const response = await fetch("http://localhost:5261/api/Auth/register", {
+    const response = await fetch(`${API_URL}/Auth/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(userData),
@@ -213,11 +217,14 @@ export const registerUser = async (
  * 🔹 Inicia sesión en la API
  * @param email Correo electrónico
  * @param password Contraseña
- * @returns Token de autenticación
+ * @returns Token de autenticación y datos del usuario
  */
-export const loginUser = async (email: string, password: string): Promise<AuthResponse> => {
+export const loginUser = async (
+  email: string, 
+  password: string
+): Promise<AuthResponse> => {
   try {
-    const response = await fetch("http://localhost:5261/api/Auth/login", {
+    const response = await fetch(`${API_URL}/Auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
@@ -228,7 +235,12 @@ export const loginUser = async (email: string, password: string): Promise<AuthRe
       throw new Error(errorData.message || "Error al iniciar sesión");
     }
 
-    return await response.json(); // Retorna { token }
+    const result = await response.json();
+    
+    // Registrar el inicio de sesión
+    console.log(`✅ Usuario autenticado: ${email}`);
+    
+    return result;
   } catch (error) {
     console.error("❌ Error en loginUser:", error);
     throw new Error(error instanceof Error ? error.message : "Error de conexión");
@@ -236,9 +248,62 @@ export const loginUser = async (email: string, password: string): Promise<AuthRe
 };
 
 /**
+ * 🔹 Inicia el flujo de autenticación con Google
+ * Redirige al usuario a la página de autenticación de Google
+ */
+export const loginWithGoogle = () => {
+  // Obtener la URL actual para el callback después de la autenticación
+  const redirectUri = `${window.location.origin}/auth/google/callback`;
+  
+  // Redirigir al usuario al endpoint de login con Google
+  window.location.href = `${API_URL}/Auth/google-login?redirectUri=${encodeURIComponent(redirectUri)}`;
+};
+
+/**
+ * 🔹 Inicia el flujo de autenticación con Facebook
+ * Redirige al usuario a la página de autenticación de Facebook
+ */
+export const loginWithFacebook = () => {
+  // Obtener la URL actual para el callback después de la autenticación
+  const redirectUri = `${window.location.origin}/auth/facebook/callback`;
+  
+  // Redirigir al usuario al endpoint de login con Facebook
+  window.location.href = `${API_URL}/Auth/facebook-login?redirectUri=${encodeURIComponent(redirectUri)}`;
+};
+
+/**
+ * 🔹 Procesa el callback de la autenticación OAuth (Google/Facebook)
+ * @param provider Proveedor OAuth (google/facebook)
+ * @param code Código de autorización
+ * @returns Token de autenticación y datos del usuario
+ */
+export const processOAuthCallback = async (
+  provider: string,
+  code: string
+): Promise<AuthResponse> => {
+  try {
+    const response = await fetch(`${API_URL}/Auth/${provider}-callback`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code }),
+    });
+
+    if (!response.ok) {
+      const errorData: ErrorResponse = await response.json();
+      throw new Error(errorData.message || "Error en autenticación con proveedor externo");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error(`❌ Error en processOAuthCallback (${provider}):`, error);
+    throw new Error(error instanceof Error ? error.message : "Error de conexión");
+  }
+};
+
+/**
  * 🔹 Verifica si el usuario está autenticado
  * @param request Petición HTTP
- * @returns {isAuthenticated: boolean}
+ * @returns Boolean indicando si el token es válido
  */
 export const verifyToken = async (request: Request): Promise<boolean> => {
   try {
@@ -250,8 +315,8 @@ export const verifyToken = async (request: Request): Promise<boolean> => {
       return false;
     }
 
-    // Validar token con el backend (opcional)
-    const response = await fetch("http://localhost:5261/api/Auth/validate-token", {
+    // Validar token con el backend
+    const response = await fetch(`${API_URL}/Auth/validate-token`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -260,7 +325,7 @@ export const verifyToken = async (request: Request): Promise<boolean> => {
     });
 
     if (!response.ok) {
-      console.warn("⚠️ Token inválido, cerrando sesión...");
+      console.warn("⚠️ Token inválido");
       return false;
     }
 
@@ -278,18 +343,23 @@ export const verifyToken = async (request: Request): Promise<boolean> => {
  */
 export const logout = async (): Promise<AuthResponse> => {
   try {
-    // Obtener el token de la cookie
+    // Obtener el token de la cookie en el navegador
     const token = document.cookie
       .split("; ")
       .find((row) => row.startsWith("token="))
       ?.split("=")[1];
 
     if (!token) {
-      throw new Error("No authentication token found");
+      console.warn("⚠️ No hay token para cerrar sesión");
+      return {
+        success: true,
+        message: "No había sesión activa",
+        token: "",
+      };
     }
 
     // Enviar petición para cerrar sesión en el backend
-    const response = await fetch("http://localhost:5261/api/Auth/logout", {
+    const response = await fetch(`${API_URL}/Auth/logout`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -298,12 +368,11 @@ export const logout = async (): Promise<AuthResponse> => {
     });
 
     if (!response.ok) {
-      throw new Error("Logout failed");
+      throw new Error("Error al cerrar sesión en el servidor");
     }
 
-    // Eliminar el token de las cookies
-    document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-
+    console.log("✅ Sesión cerrada en el servidor");
+    
     return {
       success: true,
       message: "Sesión cerrada exitosamente",
@@ -316,5 +385,29 @@ export const logout = async (): Promise<AuthResponse> => {
       message: error instanceof Error ? error.message : "Error al cerrar sesión",
       token: "",
     };
+  }
+};
+
+/**
+ * 🔹 Obtiene información del usuario actual
+ * @param token Token de autenticación
+ * @returns Datos del usuario
+ */
+export const getCurrentUser = async (token: string): Promise<any> => {
+  try {
+    const response = await fetch(`${API_URL}/Auth/me`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Error al obtener información del usuario");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("❌ Error en getCurrentUser:", error);
+    throw new Error(error instanceof Error ? error.message : "Error de conexión");
   }
 };
