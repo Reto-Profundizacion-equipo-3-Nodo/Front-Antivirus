@@ -28,6 +28,28 @@ export default function Navbar({ isAuthenticated }: NavbarProps) {
   const userMenuRef = useRef<HTMLDivElement>(null);
   const userButtonRef = useRef<HTMLButtonElement>(null);
 
+   useEffect(() => {
+     const handleClickOutside = (event: MouseEvent) => {
+       if (!userMenuRef.current || !userButtonRef.current) return;
+
+       const target = event.target as Node;
+       const isClickInsideMenu = userMenuRef.current.contains(target);
+       const isClickOnButton = userButtonRef.current.contains(target);
+
+       if (!isClickInsideMenu && !isClickOnButton) {
+         setIsUserMenuOpen(false);
+       }
+     };
+
+     document.addEventListener("mousedown", handleClickOutside);
+     return () => document.removeEventListener("mousedown", handleClickOutside);
+   }, []);
+
+   const toggleTheme = () => {
+     setIsDarkMode(!isDarkMode);
+     document.documentElement.classList.toggle("dark");
+   };
+
   // Obtener los datos del usuario al cargar la página
   useEffect(() => {
     setCurrentUser(getUserData());
@@ -60,27 +82,7 @@ export default function Navbar({ isAuthenticated }: NavbarProps) {
       return null;
     }
   };
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (!userMenuRef.current || !userButtonRef.current) return;
-
-      const target = event.target as Node;
-      const isClickInsideMenu = userMenuRef.current.contains(target);
-      const isClickOnButton = userButtonRef.current.contains(target);
-
-      if (!isClickInsideMenu && !isClickOnButton) {
-        setIsUserMenuOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode);
-    document.documentElement.classList.toggle("dark");
-  };
+ 
 
   console.log(currentUser)
   return (
@@ -204,7 +206,7 @@ export default function Navbar({ isAuthenticated }: NavbarProps) {
               ) : (
                 <>
                   <Link to="/login" className="block px-3 py-1.5 text-base hover:bg-yellow-300/60 transition-colors text-right">
-                    Iniciar sesión
+                    Login
                   </Link>
                   <Link to="/register" className="block px-3 py-1.5 text-base hover:bg-yellow-300/60 transition-colors text-right">
                     Registrarme
