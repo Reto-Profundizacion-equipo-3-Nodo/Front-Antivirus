@@ -162,4 +162,3 @@ export async function logout(): Promise<AuthResponse> {
     }
 }
 
-

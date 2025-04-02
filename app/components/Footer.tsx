@@ -1,6 +1,6 @@
 import { Link } from "@remix-run/react";
 import { Instagram, Facebook, Linkedin, Youtube } from "lucide-react";
-// ... (otros imports se mantienen igual)
+
 
 export default function Footer() {
   return (
