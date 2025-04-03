@@ -21,6 +21,14 @@ const FiltroOportunidades = () => {
         fetchFilteredOpportunities(query);
     };
 
+    const clearFilters = () => {
+        // Limpiar los filtros
+        setTypeFilter('');
+        setModalityFilter('');
+        setManagerFilter('');
+        fetchFilteredOpportunities(query);  // Vuelve a cargar las oportunidades sin ningún filtro
+    };
+
     const fetchFilteredOpportunities = async (query: string) => {
         const token = document.cookie
             .split('; ')
@@ -112,6 +120,12 @@ const FiltroOportunidades = () => {
                     className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
                 >
                     Aplicar Filtros
+                </button>
+                <button
+                    onClick={clearFilters}
+                    className="mt-4 ml-4 px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
+                >
+                    Limpiar Filtros
                 </button>
             </div>
 
