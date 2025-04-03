@@ -309,6 +309,21 @@
   background: #165dbb;
 }
 
+.errorMessage {
+  background: rgba(255, 0, 0, 0.1);
+  border-left: 4px solid #ff0000;
+  padding: 0.8rem;
+  margin-bottom: 1rem;
+  color: #d32f2f;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.form {
+  width: 100%;
+}
+
+
 /* Responsividad */
 @media (max-width: 768px) {
   .imageContainer {

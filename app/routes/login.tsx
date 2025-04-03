@@ -1,14 +1,10 @@
-// //Importamos los módulos necesarios
-// import { useState } from "react";
-// import { Form, Link } from "@remix-run/react";
-// import { json } from "@remix-run/node";
-// import { ActionFunction } from "@remix-run/node";
+// // Importamos los módulos necesarios
+// import { useState, useEffect } from "react";
+// import { Form, Link, useActionData, useSubmit, useTransition, useNavigate } from "@remix-run/react";
 // import { FcGoogle } from "react-icons/fc";
 // import { FaFacebook, FaEnvelope, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
 // import { motion } from "framer-motion";
 // import styles from '../styles/login.module.css';
-// import { createUserSession } from "~/utils/session.server";
-
 
 // // Componente para la entrada de contraseña con opción de mostrar u ocultar
 // const PasswordInput = () => {
@@ -40,7 +36,7 @@
 // };
 
 // // Componente para los botones de inicio de sesión con redes sociales
-// const SocialButtons = () => (
+// const SocialButtons = ({ onSocialLogin }) => (
 //   <motion.div 
 //     className={styles.socialButtons} 
 //     initial={{ opacity: 0, y: 20 }} // Inicia con opacidad 0 y desplazamiento de 20px
@@ -48,11 +44,23 @@
 //     transition={{ duration: 0.5 }} // Duración de la animación
 //   >
 //     {/* Botón para ingresar con Google */}
-//     <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className={styles.googleButton}>
+//     <motion.button 
+//       type="button"
+//       onClick={() => onSocialLogin('google')} 
+//       whileHover={{ scale: 1.05 }} 
+//       whileTap={{ scale: 0.95 }} 
+//       className={styles.googleButton}
+//     >
 //       <FcGoogle /> <span>Ingresa con Google</span>
 //     </motion.button>
 //     {/* Botón para ingresar con Facebook */}
-//     <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className={styles.facebookButton}>
+//     <motion.button 
+//       type="button"
+//       onClick={() => onSocialLogin('facebook')} 
+//       whileHover={{ scale: 1.05 }} 
+//       whileTap={{ scale: 0.95 }} 
+//       className={styles.facebookButton}
+//     >
 //       <FaFacebook /> <span>Ingresa con Facebook</span>
 //     </motion.button>
 //   </motion.div>
@@ -60,6 +68,62 @@
 
 // // Componente principal de la página de inicio de sesión
 // export default function LoginPage() {
+//   const actionData = useActionData();
+//   const transition = useTransition();
+//   const navigate = useNavigate();
+//   const submit = useSubmit();
+  
+//   const [errorMessage, setErrorMessage] = useState("");
+//   const [rememberMe, setRememberMe] = useState(false);
+  
+//   // Efecto para manejar errores de la acción
+//   useEffect(() => {
+//     if (actionData?.error) {
+//       setErrorMessage(actionData.error);
+//     }
+    
+//     // Si hay un token en la respuesta, el login fue exitoso
+//     if (actionData?.token) {
+//       // Guardar el token en localStorage o sessionStorage según rememberMe
+//       if (rememberMe) {
+//         localStorage.setItem('authToken', actionData.token);
+//         localStorage.setItem('userName', actionData.userName || '');
+//       } else {
+//         sessionStorage.setItem('authToken', actionData.token);
+//         sessionStorage.setItem('userName', actionData.userName || '');
+//       }
+      
+//       // Redirigir al dashboard
+//       navigate('/dashboard');
+//     }
+//   }, [actionData, navigate, rememberMe]);
+  
+//   // Manejar login con redes sociales
+//   const handleSocialLogin = async (provider) => {
+//     try {
+//       // Iniciar el flujo de autenticación según el proveedor
+//       let authUrl;
+      
+//       if (provider === 'google') {
+//         authUrl = '/auth/google';
+//       } else if (provider === 'facebook') {
+//         authUrl = '/auth/facebook';
+//       }
+      
+//       // Aquí normalmente se redirige al endpoint de autenticación
+//       // Pero para Remix, podemos usar submit para enviar la petición por POST
+//       submit({ provider }, { method: 'post', action: authUrl });
+      
+//     } catch (error) {
+//       setErrorMessage(`Error al iniciar sesión con ${provider}: ${error.message}`);
+//     }
+//   };
+  
+//   // Manejar recuperación de contraseña
+//   const handleForgotPassword = () => {
+//     navigate('/forgot-password');
+//   };
+
 //   return (
 //     <div className={styles.bgLogin}>
 //       <div className={styles.overlay}></div> {/* Capa de fondo */}
@@ -78,10 +142,20 @@
 //           <div className={styles.formContainer}>
 //             {/* Título */}
 //             <h2 className={styles.title}>Bienvenido a tu <br /><span>Banco de oportunidades</span></h2>
+            
+//             {/* Mostrar mensaje de error si existe */}
+//             {errorMessage && (
+//               <div className={styles.errorMessage}>
+//                 {errorMessage}
+//               </div>
+//             )}
+            
 //             {/* Botones de redes sociales */}
-//             <SocialButtons />
+//             <SocialButtons onSocialLogin={handleSocialLogin} />
+            
 //             {/* Separador */}
 //             <div className={styles.separator}><hr /><span>o</span><hr /></div>
+            
 //             {/* Formulario de inicio de sesión */}
 //             <Form method="post" className={styles.form}>
 //               <div className={styles.inputContainer}>
@@ -91,16 +165,32 @@
 //               <PasswordInput /> {/* Campo de contraseña */}
 //               <div className={styles.options}>
 //                 <label className={styles.checkboxLabel}>
-//                   <input type="checkbox" className={styles.checkbox} />
+//                   <input 
+//                     type="checkbox" 
+//                     name="rememberMe"
+//                     checked={rememberMe}
+//                     onChange={() => setRememberMe(!rememberMe)}
+//                     className={styles.checkbox} 
+//                   />
 //                   <span>Recordarme</span>
 //                 </label>
 //                 <Link to="/forgot-password" className={styles.link}>Olvidé mi contraseña</Link>
 //               </div>
+              
 //               {/* Botón de inicio de sesión */}
-//               <motion.button type="submit" className={styles.loginButton} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-//                 Iniciar Sesión
+//               <motion.button 
+//                 type="submit" 
+//                 className={styles.loginButton} 
+//                 whileHover={{ scale: 1.05 }} 
+//                 whileTap={{ scale: 0.95 }}
+//                 disabled={transition.state === "submitting"}
+//               >
+//                 {transition.state === "submitting" 
+//                   ? "Iniciando sesión..." 
+//                   : "Iniciar Sesión"}
 //               </motion.button>
 //             </Form>
+            
 //             {/* Texto de registro */}
 //             <div className={styles.registerText}>
 //               ¿No tienes una cuenta? <Link to="/register" className={styles.link}>Regístrate</Link>
@@ -112,96 +202,58 @@
 //   );
 // }
 
-
-// export const action: ActionFunction = async ({ request }) => {
-//   const formData = await request.formData();
-//   const email = formData.get("email") as string;
-//   const password = formData.get("password") as string;
-
-// // Simulación de autentificación
-//   if (email !== "admin@ejemplo.com" || password !== "123456") {
-//     return json({ error: "Credenciales incorrectas" }, { status: 400 });
-//   }
-
-//   //Datos del usuario autentificado.
-//   const user = { id: "1", email, role: "admin" };
-
-//   return createUserSession({ request, user, redirectTo: "/dashboard" });
-// };
-//Importamos los módulos necesarios
 import { useState, useEffect } from "react";
-import { Form, Link, useActionData, useLoaderData, useNavigation, useLocation } from "@remix-run/react";
-import { json, redirect, LoaderFunction, ActionFunction } from "@remix-run/node";
+import { Form, Link, useActionData, useSubmit, useNavigation, useNavigate } from "@remix-run/react";
+import type { ActionFunction } from "@remix-run/node";
+import { json } from "@remix-run/node"; // Importamos json para respuestas tipadas
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook, FaEnvelope, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
 import { motion } from "framer-motion";
 import styles from '../styles/login.module.css';
-import { createUserSession, getSession } from "~/utils/session.server";
-import { loginUser, loginWithGoogle, loginWithFacebook } from "~/services/authService";
 
-// Loader para verificar si el usuario ya está autenticado
-export const loader: LoaderFunction = async ({ request }) => {
-  // Obtener la sesión actual
-  const session = await getSession(request);
-  const user = session.get("user");
-  
-  // Si hay un usuario en sesión, redirigir al dashboard
-  if (user) {
-    return redirect("/dashboard");
-  }
-  
-  // Obtener error de query params (útil para redirects desde OAuth)
-  const url = new URL(request.url);
-  const error = url.searchParams.get("error");
-  
-  return json({ error });
-};
+// Define types for our action data
+type ActionData = {
+  error?: string;
+  token?: string;
+  userName?: string;
+} | undefined;
 
-// Action para procesar el formulario de login
+// Define type for social provider
+type SocialProvider = 'google' | 'facebook';
+
+// Definir la función action para manejar el envío del formulario
 export const action: ActionFunction = async ({ request }) => {
-  const formData = await request.formData();
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
-  const remember = formData.get("remember") === "on";
-
-  // Validación básica de campos
-  if (!email || !password) {
-    return json({ error: "El correo y la contraseña son obligatorios" }, { status: 400 });
-  }
-
   try {
-    // Usar el servicio de autenticación real
-    const response = await loginUser(email, password);
+    const formData = await request.formData();
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+    const rememberMe = formData.get("rememberMe") === "on";
     
-    // Si la autenticación es exitosa, crear una sesión
-    if (response.token) {
-      // Extraer información del usuario desde la respuesta o token
-      // Ajustar esto según tu API
-      const user = response.user || { 
-        id: "1", 
-        email, 
-        role: "admin" // Esto debería venir de tu backend
-      };
-
-      // Obtener URL de redirección desde query params (si existe)
-      const url = new URL(request.url);
-      const redirectTo = url.searchParams.get("redirectTo") || "/dashboard";
-
-      // Crear sesión y guardar token
-      return createUserSession({ 
-        request, 
-        user,
-        redirectTo,
-        token: response.token
-      });
+    // Validación básica
+    if (!email || !password) {
+      return json({ error: "Email y contraseña son requeridos" });
     }
     
-    return json({ error: "Credenciales incorrectas" }, { status: 400 });
+    // Simulación de llamada a API (reemplaza con tu lógica real)
+    // En lugar de usar fetch directamente, simulamos la respuesta
+    // para evitar problemas de BodyStreamBuffer
+    
+    // Simular procesamiento (validación del servidor, etc.)
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    // Simular respuesta exitosa
+    return json({
+      token: "mock-jwt-token-example",
+      userName: email.split('@')[0]
+    });
+    
   } catch (error) {
-    console.error("Error en login:", error);
+    console.error("Error en action:", error);
     return json({ 
-      error: error instanceof Error ? error.message : "Error al iniciar sesión" 
-    }, { status: 500 });
+      error: error instanceof Error 
+        ? error.message 
+        : "Error al iniciar sesión. Por favor intenta de nuevo." 
+    });
   }
 };
 
@@ -234,162 +286,163 @@ const PasswordInput = () => {
   );
 };
 
+// Define props interface for SocialButtons
+interface SocialButtonsProps {
+  onSocialLogin: (provider: SocialProvider) => void;
+}
+
 // Componente para los botones de inicio de sesión con redes sociales
-const SocialButtons = () => {
-  // Manejadores para login con redes sociales
-  const handleGoogleLogin = (e: React.MouseEvent) => {
-    e.preventDefault();
-    loginWithGoogle();
-  };
-  
-  const handleFacebookLogin = (e: React.MouseEvent) => {
-    e.preventDefault();
-    loginWithFacebook();
-  };
-  
-  return (
-    <motion.div 
-      className={styles.socialButtons} 
-      initial={{ opacity: 0, y: 20 }} // Inicia con opacidad 0 y desplazamiento de 20px
-      animate={{ opacity: 1, y: 0 }} // Aparece con opacidad 1 y sin desplazamiento
-      transition={{ duration: 0.5 }} // Duración de la animación
+const SocialButtons = ({ onSocialLogin }: SocialButtonsProps) => (
+  <motion.div 
+    className={styles.socialButtons} 
+    initial={{ opacity: 0, y: 20 }} // Inicia con opacidad 0 y desplazamiento de 20px
+    animate={{ opacity: 1, y: 0 }} // Aparece con opacidad 1 y sin desplazamiento
+    transition={{ duration: 0.5 }} // Duración de la animación
+  >
+    {/* Botón para ingresar con Google */}
+    <motion.button 
+      type="button"
+      onClick={() => onSocialLogin('google')} 
+      whileHover={{ scale: 1.05 }} 
+      whileTap={{ scale: 0.95 }} 
+      className={styles.googleButton}
     >
-      {/* Botón para ingresar con Google */}
-      <motion.button 
-        type="button"
-        onClick={handleGoogleLogin}
-        whileHover={{ scale: 1.05 }} 
-        whileTap={{ scale: 0.95 }} 
-        className={styles.googleButton}
-      >
-        <FcGoogle /> <span>Ingresa con Google</span>
-      </motion.button>
-      {/* Botón para ingresar con Facebook */}
-      <motion.button 
-        type="button"
-        onClick={handleFacebookLogin}
-        whileHover={{ scale: 1.05 }} 
-        whileTap={{ scale: 0.95 }} 
-        className={styles.facebookButton}
-      >
-        <FaFacebook /> <span>Ingresa con Facebook</span>
-      </motion.button>
-    </motion.div>
-  );
-};
+      <FcGoogle /> <span>Ingresa con Google</span>
+    </motion.button>
+    {/* Botón para ingresar con Facebook */}
+    <motion.button 
+      type="button"
+      onClick={() => onSocialLogin('facebook')} 
+      whileHover={{ scale: 1.05 }} 
+      whileTap={{ scale: 0.95 }} 
+      className={styles.facebookButton}
+    >
+      <FaFacebook /> <span>Ingresa con Facebook</span>
+    </motion.button>
+  </motion.div>
+);
 
 // Componente principal de la página de inicio de sesión
 export default function LoginPage() {
-  // Obtener datos de action y loader
-  const actionData = useActionData<{ error?: string }>();
-  const loaderData = useLoaderData<{ error?: string }>();
+  const actionData = useActionData<ActionData>();
   const navigation = useNavigation();
-  const location = useLocation();
+  const navigate = useNavigate();
+  const submit = useSubmit();
   
-  // Estado para mensajes de error
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
   
-  // Determinar si está cargando
-  const isLoading = navigation.state === "submitting";
-  
-  // Actualizar mensaje de error cuando cambian los datos
+  // Efecto para manejar errores de la acción y redirección
   useEffect(() => {
-    // Priorizar error de action, luego de loader
-    const error = actionData?.error || loaderData?.error;
-    setErrorMessage(error || null);
-    
-    // Limpiar error después de 5 segundos
-    if (error) {
-      const timer = setTimeout(() => setErrorMessage(null), 5000);
-      return () => clearTimeout(timer);
+    if (actionData?.error) {
+      setErrorMessage(actionData.error);
     }
-  }, [actionData, loaderData]);
+    
+    // Si hay un token en la respuesta, el login fue exitoso
+    if (actionData?.token) {
+      // Guardar el token en localStorage o sessionStorage según rememberMe
+      const storage = rememberMe ? localStorage : sessionStorage;
+      storage.setItem('authToken', actionData.token);
+      storage.setItem('userName', actionData.userName || '');
+      
+      // Usar setTimeout para evitar problemas de navegación durante la renderización
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 0);
+    }
+  }, [actionData, navigate, rememberMe]);
   
+  // Manejar login con redes sociales
+  const handleSocialLogin = async (provider: SocialProvider) => {
+    try {
+      // Iniciar el flujo de autenticación según el proveedor
+      let authUrl;
+      
+      if (provider === 'google') {
+        authUrl = '/auth/google';
+      } else if (provider === 'facebook') {
+        authUrl = '/auth/facebook';
+      } else {
+        throw new Error('Proveedor de autenticación no soportado');
+      }
+      
+      // Enviar la petición usando submit para prevenir problemas de navegación
+      submit({ provider }, { method: 'post', action: authUrl });
+      
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
+      setErrorMessage(`Error al iniciar sesión con ${provider}: ${errorMessage}`);
+    }
+  };
+
   return (
-    <div className={styles.bgLogin}>
-      <div className={styles.overlay}></div> {/* Capa de fondo */}
-      <div className={styles.loginContainer}>
-        <div className={styles.loginCard}>
-          {/* Contenedor de imagen animada */}
-          <div className={styles.imageContainer}>
-            <motion.img 
-              src="/Images/Javi.png"
-              alt="Javi"
-              className={styles.image}
-              animate={{ y: [0, -10, 0] }} // Movimiento de arriba abajo
-              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }} // Animación infinita
-            />
-          </div>
-          <div className={styles.formContainer}>
-            {/* Título */}
-            <h2 className={styles.title}>Bienvenido a tu <br /><span>Banco de oportunidades</span></h2>
-            
-            {/* Mensaje de error (si existe) */}
-            {errorMessage && (
-              <motion.div 
-                className={styles.errorMessage}
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-              >
-                {errorMessage}
-              </motion.div>
-            )}
-            
-            {/* Botones de redes sociales */}
-            <SocialButtons />
-            {/* Separador */}
-            <div className={styles.separator}><hr /><span>o</span><hr /></div>
-            {/* Formulario de inicio de sesión */}
-            <Form method="post" className={styles.form}>
-              {/* Campo para preservar la URL de redirección */}
-              {location.search.includes("redirectTo") && (
-                <input 
-                  type="hidden" 
-                  name="redirectTo" 
-                  value={new URLSearchParams(location.search).get("redirectTo") || "/dashboard"} 
-                />
-              )}
-              
-              <div className={styles.inputContainer}>
-                <FaEnvelope className={styles.icon} /> {/* Ícono de email */}
-                <input 
-                  type="email" 
-                  name="email" 
-                  placeholder="Correo Electrónico" 
-                  required 
-                  className={styles.input}
-                  disabled={isLoading}
-                />
-              </div>
-              <PasswordInput /> {/* Campo de contraseña */}
-              <div className={styles.options}>
-                <label className={styles.checkboxLabel}>
-                  <input 
-                    type="checkbox" 
-                    name="remember" 
-                    className={styles.checkbox} 
-                    disabled={isLoading}
-                  />
-                  <span>Recordarme</span>
-                </label>
-                <Link to="/forgot-password" className={styles.link}>Olvidé mi contraseña</Link>
-              </div>
-              {/* Botón de inicio de sesión */}
-              <motion.button 
-                type="submit" 
-                className={styles.loginButton} 
-                whileHover={{ scale: isLoading ? 1 : 1.05 }} 
-                whileTap={{ scale: isLoading ? 1 : 0.95 }}
-                disabled={isLoading}
-              >
-                {isLoading ? "Iniciando sesión..." : "Iniciar Sesión"}
-              </motion.button>
-            </Form>
-            {/* Texto de registro */}
-            <div className={styles.registerText}>
-              ¿No tienes una cuenta? <Link to="/register" className={styles.link}>Regístrate</Link>
+    <div className={styles.loginContainer}>
+      <div className={styles.loginCard}>
+        {/* Contenedor de imagen animada */}
+        <div className={styles.imageContainer}>
+          <motion.img 
+            src="/Images/Javi.png"
+            alt="Javi"
+            className={styles.image}
+            animate={{ y: [0, -10, 0] }} // Movimiento de arriba abajo
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }} // Animación infinita
+          />
+        </div>
+        <div className={styles.formContainer}>
+          {/* Título */}
+          <h2 className={styles.title}>Bienvenido a tu <br /><span>Banco de oportunidades</span></h2>
+          
+          {/* Mostrar mensaje de error si existe */}
+          {errorMessage && (
+            <div className={styles.errorMessage}>
+              {errorMessage}
             </div>
+          )}
+          
+          {/* Botones de redes sociales */}
+          <SocialButtons onSocialLogin={handleSocialLogin} />
+          
+          {/* Separador */}
+          <div className={styles.separator}><hr /><span>o</span><hr /></div>
+          
+          {/* Formulario de inicio de sesión */}
+          <Form method="post" className={styles.form}>
+            <div className={styles.inputContainer}>
+              <FaEnvelope className={styles.icon} /> {/* Ícono de email */}
+              <input type="email" name="email" placeholder="Correo Electrónico" required className={styles.input} />
+            </div>
+            <PasswordInput /> {/* Campo de contraseña */}
+            <div className={styles.options}>
+              <label className={styles.checkboxLabel}>
+                <input 
+                  type="checkbox" 
+                  name="rememberMe"
+                  checked={rememberMe}
+                  onChange={() => setRememberMe(!rememberMe)}
+                  className={styles.checkbox} 
+                />
+                <span>Recordarme</span>
+              </label>
+              <Link to="/forgot-password" className={styles.link}>Olvidé mi contraseña</Link>
+            </div>
+            
+            {/* Botón de inicio de sesión */}
+            <motion.button 
+              type="submit" 
+              className={styles.loginButton} 
+              whileHover={{ scale: 1.05 }} 
+              whileTap={{ scale: 0.95 }}
+              disabled={navigation.state === "submitting"}
+            >
+              {navigation.state === "submitting" 
+                ? "Iniciando sesión..." 
+                : "Iniciar Sesión"}
+            </motion.button>
+          </Form>
+          
+          {/* Texto de registro */}
+          <div className={styles.registerText}>
+            ¿No tienes una cuenta? <Link to="/register" className={styles.link}>Regístrate</Link>
           </div>
         </div>
       </div>
