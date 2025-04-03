@@ -169,6 +169,7 @@ export default function Navbar({ isAuthenticated }: NavbarProps) {
         {/* Menú usuario */}
         <div className="relative">
           <button
+            ref={userButtonRef}
             className="hover:text-yellow-300 transition"
             onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
           >
@@ -184,37 +185,55 @@ export default function Navbar({ isAuthenticated }: NavbarProps) {
           </button>
 
           {isUserMenuOpen && (
-            <div className="absolute right-0 top-10 bg-white bg-opacity-50 backdrop-blur-lg text-black shadow-md rounded-lg w-32 z-50">
+            <div
+              ref={userMenuRef}
+              className="absolute right-0 top-12 backdrop-blur-lg text-black shadow-lg rounded-lg w-48 z-50 max-w-xs transition-all duration-300 ease-in-out"
+            >
               {isAuthenticated ? (
                 <>
-                  <div className="px-3 py-1.5 text-base text-right font-semibold">
+                  {/* Nombre de usuario */}
+                  <div className="px-4 py-3 text-lg text-right font-semibold text-gray-800 hover:text-blue-600">
                     {currentUser?.name}
                   </div>
-                  <div className="px-3 py-1.5 text-base text-right font-semibold">
+
+                  {/* Correo electrónico */}
+                  <div className="px-4 py-3 text-base text-right font-medium text-gray-600 truncate">
                     {currentUser?.email}
                   </div>
-                  <div className="px-3 py-1.5 text-base text-right font-semibold">
+
+                  {/* Role */}
+                  <div className="px-4 py-3 text-base text-right font-medium text-gray-600">
                     {currentUser?.role}
                   </div>
-                  <Form method="post" action="/logout" >
-                    <button type="submit"
-                      className="block px-3 py-1.5 text-base hover:bg-yellow-300/60 transition-colors text-right">
+
+                  {/* Divider */}
+                  <div className="border-t border-gray-300 my-2" />
+
+                  {/* Logout Button */}
+                  <Form method="post" action="/logout">
+                    <button
+                      type="submit"
+                      className="block w-full px-4 py-2 text-base text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors duration-200 ease-in-out text-right"
+                    >
                       Cerrar sesión
                     </button>
                   </Form>
                 </>
               ) : (
                 <>
-                  <Link to="/login" className="block px-3 py-1.5 text-base hover:bg-yellow-300/60 transition-colors text-right">
+                  {/* Login and Register Links */}
+                  <Link to="/login" className="block px-4 py-2 text-base hover:bg-yellow-300/60 transition-colors text-right rounded-md">
                     Login
                   </Link>
-                  <Link to="/register" className="block px-3 py-1.5 text-base hover:bg-yellow-300/60 transition-colors text-right">
+                  <Link to="/register" className="block px-4 py-2 text-base hover:bg-yellow-300/60 transition-colors text-right rounded-md">
                     Registrarme
                   </Link>
                 </>
               )}
             </div>
           )}
+
+
         </div>
       </div>
 
