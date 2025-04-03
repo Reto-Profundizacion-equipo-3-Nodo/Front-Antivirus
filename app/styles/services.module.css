@@ -156,7 +156,269 @@
   left: 100%;
 }
 
-/* Responsividad */
+/* Nuevos estilos para el componente de filtros */
+/* Estilos para el contenedor de filtros */
+.filterContainer {
+  background-color: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 2rem 0;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.filterTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1.25rem;
+  color: var(--primary-color, #4a6fa5);
+  text-align: center;
+}
+
+/* Estilos para la barra de búsqueda */
+.searchBarContainer {
+  margin-bottom: 1.5rem;
+}
+
+.searchBar {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 2.5rem;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background-color: rgba(255, 255, 255, 0.8);
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: var(--primary-color, #4a6fa5);
+  box-shadow: 0 0 0 2px rgba(74, 111, 165, 0.2);
+}
+
+.searchIcon {
+  position: absolute;
+  left: 0.75rem;
+  color: #666;
+  width: 20px;
+  height: 20px;
+}
+
+/* Estilos para los grupos de filtros */
+.filterGroups {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.filterGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.filterLabel {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-color, #333);
+}
+
+.filterOptions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.filterPill {
+  padding: 0.5rem 1rem;
+  background-color: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filterPill:hover {
+  background-color: rgba(74, 111, 165, 0.1);
+}
+
+.filterPillActive {
+  background-color: var(--primary-color, #4a6fa5);
+  color: white;
+  border-color: var(--primary-color, #4a6fa5);
+}
+
+/* Estilos para el slider de rango */
+.rangeSlider {
+  width: 100%;
+  height: 6px;
+  appearance: none;
+  background: #d3d3d3;
+  outline: none;
+  border-radius: 3px;
+  margin: 0.5rem 0;
+}
+
+.rangeSlider::-webkit-slider-thumb {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--primary-color, #4a6fa5);
+  cursor: pointer;
+}
+
+.rangeSlider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--primary-color, #4a6fa5);
+  cursor: pointer;
+  border: none;
+}
+
+.rangeValues {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: #666;
+}
+
+/* Estilos para los botones de acción */
+.actionButtons {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+.resetButton, .applyButton {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.resetButton {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: #666;
+}
+
+.resetButton:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.applyButton {
+  background-color: var(--primary-color, #4a6fa5);
+  color: white;
+}
+
+.applyButton:hover {
+  background-color: var(--primary-dark, #3a5a8a);
+}
+
+/* Estilos para mensaje de no resultados */
+.noResults {
+  width: 100%;
+  padding: 3rem 0;
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  margin: 1rem 0;
+}
+
+.noResults h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--primary-color, #4a6fa5);
+  margin-bottom: 0.5rem;
+}
+
+.noResults p {
+  color: #666;
+  font-size: 1rem;
+}
+
+/* Estilos para contador de resultados */
+.resultsCount {
+  margin: 1rem 0;
+  font-size: 0.9rem;
+  color: #666;
+  text-align: right;
+}
+
+/* Estilos para filtros activos */
+.activeFilters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.activeFilter {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.75rem;
+  background-color: rgba(74, 111, 165, 0.1);
+  border-radius: 16px;
+  font-size: 0.85rem;
+  color: var(--primary-color, #4a6fa5);
+}
+
+.activeFilter button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+}
+
+.activeFilter button:hover {
+  color: #333;
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+  .filterGroups {
+    gap: 1rem;
+  }
+  
+  .actionButtons {
+    flex-direction: column;
+  }
+  
+  .resetButton, .applyButton {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .filterContainer {
+    padding: 1rem;
+  }
+  
+  .filterOptions {
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+    flex-wrap: nowrap;
+  }
+  
+  .filterPill {
+    flex-shrink: 0;
+  }
+}
 
 /* Teléfonos pequeños */
 @media (max-width: 600px) {
