@@ -28,27 +28,27 @@ export default function Navbar({ isAuthenticated }: NavbarProps) {
   const userMenuRef = useRef<HTMLDivElement>(null);
   const userButtonRef = useRef<HTMLButtonElement>(null);
 
-   useEffect(() => {
-     const handleClickOutside = (event: MouseEvent) => {
-       if (!userMenuRef.current || !userButtonRef.current) return;
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!userMenuRef.current || !userButtonRef.current) return;
 
-       const target = event.target as Node;
-       const isClickInsideMenu = userMenuRef.current.contains(target);
-       const isClickOnButton = userButtonRef.current.contains(target);
+      const target = event.target as Node;
+      const isClickInsideMenu = userMenuRef.current.contains(target);
+      const isClickOnButton = userButtonRef.current.contains(target);
 
-       if (!isClickInsideMenu && !isClickOnButton) {
-         setIsUserMenuOpen(false);
-       }
-     };
+      if (!isClickInsideMenu && !isClickOnButton) {
+        setIsUserMenuOpen(false);
+      }
+    };
 
-     document.addEventListener("mousedown", handleClickOutside);
-     return () => document.removeEventListener("mousedown", handleClickOutside);
-   }, []);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
-   const toggleTheme = () => {
-     setIsDarkMode(!isDarkMode);
-     document.documentElement.classList.toggle("dark");
-   };
+  const toggleTheme = () => {
+    setIsDarkMode(!isDarkMode);
+    document.documentElement.classList.toggle("dark");
+  };
 
   // Obtener los datos del usuario al cargar la página
   useEffect(() => {
@@ -82,9 +82,7 @@ export default function Navbar({ isAuthenticated }: NavbarProps) {
       return null;
     }
   };
- 
 
-  console.log(currentUser)
   return (
     <nav className="bg-gradient-to-b from-[#283E51] to-[#4B79A1] dark:bg-[#172a41] text-white py-2 px-10 flex justify-between items-center relative z-50">
       {/* Logo */}
@@ -127,12 +125,14 @@ export default function Navbar({ isAuthenticated }: NavbarProps) {
         </li>
 
         <li className="relative group">
-          <Link
-            to="/novedades"
-            className="hover:text-yellow-300 block pb-2 transform transition-all duration-300 hover:scale-110 origin-bottom"
-          >
-            Novedades
-          </Link>
+          {isAuthenticated &&
+            <Link
+              to="/novedades"
+              className="hover:text-yellow-300 block pb-2 transform transition-all duration-300 hover:scale-110 origin-bottom"
+            >
+              Novedades
+            </Link>
+          }
         </li>
       </ul>
 
