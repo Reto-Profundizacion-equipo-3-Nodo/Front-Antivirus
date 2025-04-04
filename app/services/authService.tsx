@@ -21,6 +21,13 @@ interface ErrorResponse {
     message: string;
 }
 
+interface AdminData {
+    id: number;
+    name: string;
+    email: string;
+    role: string;
+  }
+
 /**
  * Realiza una petición POST a la API para registrar un usuario
  * @param {RegisterUserData} userData - Datos del usuario
@@ -85,6 +92,21 @@ export const loginUser = async (email: string, password: string): Promise<AuthRe
         throw new Error(error.message || "Error de conexión");
     }
 };
+
+export const getAdminData = async (): Promise<AdminData> => {
+    const response = await fetch('/api/Admin/profile', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+  
+    if (!response.ok) {
+      throw new Error('Error al obtener los datos del administrador');
+    }
+  
+    return response.json();
+  };
 
 /**
  * Verifica si el token es válido
