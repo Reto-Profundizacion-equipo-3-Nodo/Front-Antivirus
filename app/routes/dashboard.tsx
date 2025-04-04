@@ -1,36 +1,3 @@
-<<<<<<< Updated upstream
-import { useLoaderData } from "@remix-run/react";
-import { json, redirect, type LoaderFunction } from "@remix-run/node";
-import { getSession } from "~/utils/session.server";
-
-export const loader: LoaderFunction = async ({ request }) => {
-  // Obtener la sesión completa desde el request
-  const session = await getSession(request);
-
-  // Extraer el usuario de la sesión
-  const user = session.get("user") as { name: string } | null;
-
-  // Si no hay usuario autenticado, redirigir al login
-  if (!user) {
-    return redirect("/login");
-  }
-
-  // Retornar los datos del usuario en formato JSON
-  return json({ user });
-};
-
-export default function Dashboard() {
-  // Obtener los datos del usuario desde el loader
-  const { user } = useLoaderData<typeof loader>();
-
-  return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-6">
-        <h1 className="text-2xl font-bold text-gray-800">
-          Bienvenido, {user.name}!
-        </h1>
-        <p className="text-gray-600 mt-2">Este es tu dashboard personal.</p>
-=======
 // import { useEffect } from "react";
 // import { useNavigate } from "@remix-run/react";
 // import type { LoaderFunction } from "@remix-run/node";
@@ -367,7 +334,7 @@ interface LineChartProps {
 }
 
 interface ActivityItemProps {
-  icon: string;
+  icon: React.ReactNode;
   title: string;
   date: string;
 }
@@ -402,7 +369,7 @@ const LineChart: React.FC<LineChartProps> = ({ data, color = "#3b82f6", label = 
 
   return (
     <div className="h-32 w-full">
-      <svg viewBox="0 0 100 100" className="h-full w-full overflow-visible">
+      <svg viewBox="0 0 100 100" className="h-full w-full overflow-visible" aria-label={`Gráfico de línea: ${label}`}>
         <polyline
           points={points}
           fill="none"
@@ -429,13 +396,13 @@ const LineChart: React.FC<LineChartProps> = ({ data, color = "#3b82f6", label = 
 };
 
 // Componente para tarjetas de estadísticas
-const StatCard: React.FC<StatCardProps> = ({ title, value, change, percentage, color = "blue", icon }) => {
+const StatCard: React.FC<StatCardProps> = ({ title, value, change, percentage = 70, color = "blue", icon }) => {
   const isPositive = change === "up";
   return (
     <div className="bg-white dark:bg-slate-800 rounded-lg p-6 shadow-sm transition-all">
       <div className="flex items-center justify-between mb-2">
         <div className="text-sm text-slate-500 dark:text-slate-400">{title}</div>
-        <div className={`w-8 h-8 rounded-full bg-${color}-100 dark:bg-${color}-900/30 flex items-center justify-center text-${color}-500`}>
+        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-${color}-500`} style={{ backgroundColor: `var(--${color}-100)` }}>
           {icon}
         </div>
       </div>
@@ -449,7 +416,13 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, change, percentage, c
         )}
       </div>
       <div className="h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
-        <div className={`h-full bg-${color}-500`} style={{ width: `${percentage || 70}%` }}></div>
+        <div 
+          className={`h-full`} 
+          style={{ 
+            width: `${percentage}%`,
+            backgroundColor: `var(--${color}-500)`
+          }}
+        ></div>
       </div>
     </div>
   );
@@ -469,7 +442,6 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ icon, title, date }) => {
     </div>
   );
 };
-
 // Componente principal Dashboard
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -488,7 +460,7 @@ export default function Dashboard() {
   useEffect(() => {
     const savedName = localStorage.getItem('userName') || sessionStorage.getItem('userName') || 'Usuario';
     setUserName(savedName);
-    setUserInitials(savedName.split(' ').map(n => n[0]).join('').toUpperCase());
+    setUserInitials(savedName.split(' ').map(n => n[0]).join('').toUpperCase() || 'TB');
     
     const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
     if (!token) {
@@ -541,13 +513,21 @@ export default function Dashboard() {
   // Número de notificaciones no leídas
   const unreadCount = notifications.filter(n => !n.read).length;
 
+  // Handler de teclado para elementos interactivos
+  const handleKeyPress = (e: React.KeyboardEvent, action: () => void) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      action();
+    }
+  };
+
   return (
     <div className="bg-slate-50 dark:bg-slate-900 text-slate-700 dark:text-slate-300 leading-relaxed font-sans min-h-screen transition-colors duration-300">
       <div className="max-w-7xl mx-auto p-4 md:p-8">
         <header className="flex justify-between items-center mb-8 pb-4 border-b border-slate-200 dark:border-slate-700">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-base">
-              TB
+              {userInitials}
             </div>
             <div className="text-xl font-semibold text-slate-800 dark:text-white">
               Tu Banco de Oportunidades
@@ -557,6 +537,7 @@ export default function Dashboard() {
             {/* Botón de tema */}
             <button 
               onClick={toggleDarkMode} 
+              onKeyDown={(e) => handleKeyPress(e, toggleDarkMode)}
               className="w-8 h-8 flex items-center justify-center text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
               aria-label={darkMode ? "Cambiar a modo claro" : "Cambiar a modo oscuro"}
             >
@@ -567,6 +548,7 @@ export default function Dashboard() {
             <div className="relative">
               <button 
                 onClick={() => setShowNotifs(!showNotifs)} 
+                onKeyDown={(e) => handleKeyPress(e, () => setShowNotifs(!showNotifs))}
                 className="w-8 h-8 flex items-center justify-center text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
                 aria-label="Ver notificaciones"
               >
@@ -590,6 +572,10 @@ export default function Dashboard() {
                           key={notif.id}
                           className={`p-3 border-b border-slate-200 dark:border-slate-700 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 ${!notif.read ? 'bg-blue-50 dark:bg-blue-900/10' : ''}`}
                           onClick={() => markAsRead(notif.id)}
+                          onKeyDown={(e) => handleKeyPress(e, () => markAsRead(notif.id))}
+                          tabIndex={0}
+                          role="button"
+                          aria-label={`Notificación: ${notif.text}. ${!notif.read ? 'No leída' : 'Leída'}`}
                         >
                           <div className="text-sm font-medium text-slate-800 dark:text-white">{notif.text}</div>
                           <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">Ahora</div>
@@ -699,6 +685,9 @@ export default function Dashboard() {
                   : 'text-slate-500 dark:text-slate-400'
               }`}
               onClick={() => setActiveTab('servicios')}
+              onKeyDown={(e) => handleKeyPress(e, () => setActiveTab('servicios'))}
+              aria-selected={activeTab === 'servicios'}
+              role="tab"
             >
               Servicios disponibles
             </button>
@@ -709,6 +698,9 @@ export default function Dashboard() {
                   : 'text-slate-500 dark:text-slate-400'
               }`}
               onClick={() => setActiveTab('historial')}
+              onKeyDown={(e) => handleKeyPress(e, () => setActiveTab('historial'))}
+              aria-selected={activeTab === 'historial'}
+              role="tab"
             >
               Historial
             </button>
@@ -719,6 +711,9 @@ export default function Dashboard() {
                   : 'text-slate-500 dark:text-slate-400'
               }`}
               onClick={() => setActiveTab('config')}
+              onKeyDown={(e) => handleKeyPress(e, () => setActiveTab('config'))}
+              aria-selected={activeTab === 'config'}
+              role="tab"
             >
               Configuración
             </button>
@@ -726,8 +721,13 @@ export default function Dashboard() {
           
           {/* Contenido de las pestañas */}
           {activeTab === 'servicios' && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="bg-white dark:bg-slate-800 rounded-lg p-4 border border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow cursor-pointer">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" role="tabpanel">
+              <div className="bg-white dark:bg-slate-800 rounded-lg p-4 border border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow cursor-pointer"
+                tabIndex={0}
+                role="button"
+                aria-label="Estadísticas personales"
+                onKeyDown={(e) => handleKeyPress(e, () => {})}
+              >
                 <div className="font-semibold mb-2 dark:text-white">Estadísticas personales</div>
                 <div className="flex justify-between text-sm text-slate-500 dark:text-slate-400">
                   <div>Actualizado: Hoy</div>
@@ -738,7 +738,12 @@ export default function Dashboard() {
                 </div>
               </div>
               
-              <div className="bg-white dark:bg-slate-800 rounded-lg p-4 border border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow cursor-pointer">
+              <div className="bg-white dark:bg-slate-800 rounded-lg p-4 border border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow cursor-pointer"
+                tabIndex={0}
+                role="button"
+                aria-label="Actividad reciente"
+                onKeyDown={(e) => handleKeyPress(e, () => {})}
+              >
                 <div className="font-semibold mb-2 dark:text-white">Actividad reciente</div>
                 <div className="flex justify-between text-sm text-slate-500 dark:text-slate-400">
                   <div>Actualizado: Hoy</div>
@@ -749,7 +754,12 @@ export default function Dashboard() {
                 </div>
               </div>
               
-              <div className="bg-white dark:bg-slate-800 rounded-lg p-4 border border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow cursor-pointer">
+              <div className="bg-white dark:bg-slate-800 rounded-lg p-4 border border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow cursor-pointer"
+                tabIndex={0}
+                role="button"
+                aria-label="Configuración de cuenta"
+                onKeyDown={(e) => handleKeyPress(e, () => {})}
+              >
                 <div className="font-semibold mb-2 dark:text-white">Configuración de cuenta</div>
                 <div className="flex justify-between text-sm text-slate-500 dark:text-slate-400">
                   <div>Seguridad: Buena</div>
@@ -760,7 +770,12 @@ export default function Dashboard() {
                 </div>
               </div>
               
-              <div className="bg-white dark:bg-slate-800 rounded-lg p-4 border border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow cursor-pointer">
+              <div className="bg-white dark:bg-slate-800 rounded-lg p-4 border border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow cursor-pointer"
+                tabIndex={0}
+                role="button"
+                aria-label="Recursos adicionales"
+                onKeyDown={(e) => handleKeyPress(e, () => {})}
+              >
                 <div className="font-semibold mb-2 dark:text-white">Recursos adicionales</div>
                 <div className="flex justify-between text-sm text-slate-500 dark:text-slate-400">
                   <div>12 documentos</div>
@@ -774,7 +789,7 @@ export default function Dashboard() {
           )}
           
           {activeTab === 'historial' && (
-            <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-4">
+            <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-4" role="tabpanel">
               <h3 className="font-medium mb-4 text-slate-800 dark:text-white">Historial de actividades</h3>
               <div className="space-y-2">
                 {Array.from({ length: 5 }).map((_, i) => (
@@ -793,15 +808,16 @@ export default function Dashboard() {
           )}
           
           {activeTab === 'config' && (
-            <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-4">
+            <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-4" role="tabpanel">
               <h3 className="font-medium mb-4 text-slate-800 dark:text-white">Configuración de usuario</h3>
               
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                  <label htmlFor="username" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
                     Nombre de usuario
                   </label>
                   <input 
+                    id="username"
                     type="text" 
                     value={userName}
                     onChange={(e) => setUserName(e.target.value)}
@@ -810,19 +826,25 @@ export default function Dashboard() {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                  <label id="theme-label" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
                     Tema
                   </label>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2" role="radiogroup" aria-labelledby="theme-label">
                     <button 
                       onClick={() => setDarkMode(false)}
+                      onKeyDown={(e) => handleKeyPress(e, () => setDarkMode(false))}
                       className={`px-3 py-1 rounded ${!darkMode ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' : 'bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300'}`}
+                      role="radio"
+                      aria-checked={!darkMode}
                     >
                       Claro
                     </button>
                     <button 
                       onClick={() => setDarkMode(true)}
+                      onKeyDown={(e) => handleKeyPress(e, () => setDarkMode(true))}
                       className={`px-3 py-1 rounded ${darkMode ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' : 'bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300'}`}
+                      role="radio"
+                      aria-checked={darkMode}
                     >
                       Oscuro
                     </button>
@@ -830,17 +852,25 @@ export default function Dashboard() {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                  <label htmlFor="notifications" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
                     Notificaciones
                   </label>
                   <div className="flex items-center gap-2">
-                    <input type="checkbox" defaultChecked className="rounded text-blue-500" />
+                    <input 
+                      id="notifications" 
+                      type="checkbox" 
+                      defaultChecked 
+                      className="rounded text-blue-500" 
+                    />
                     <span className="text-sm text-slate-700 dark:text-slate-300">Recibir notificaciones</span>
                   </div>
                 </div>
                 
                 <div className="pt-4">
-                  <button className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
+                  <button 
+                    className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+                    aria-label="Guardar cambios de configuración"
+                  >
                     Guardar cambios
                   </button>
                 </div>
@@ -859,6 +889,7 @@ export default function Dashboard() {
                 title="Has actualizado tu perfil de usuario"
                 date="Hoy, 09:45"
               />
+  
               
               <ActivityItem 
                 icon="👤"
@@ -920,7 +951,6 @@ export default function Dashboard() {
           </button>
           <p className="text-sm text-slate-500 dark:text-slate-400">© 2025 - Tu Banco de Oportunidades</p>
         </footer>
->>>>>>> Stashed changes
       </div>
     </div>
   );
