@@ -71,11 +71,11 @@ export default function Navbar({ isAuthenticated }: NavbarProps) {
       //TODO: Guardar en env los decodificadores
       const decoded: any = jwtDecode(token);
       return {
-        name: decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"],
-        email: decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"],
-        role: decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"],
+        name: decoded.name || decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"],
+        email: decoded.email || decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"],
+        role: decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] || "user",
         // cambiar esto para que busque el avatar
-        avatarUrl: decoded["avatarUrl"] || "https://api.dicebear.com/9.x/pixel-art/svg",
+        avatarUrl: decoded.picture || decoded["avatarUrl"] || "https://api.dicebear.com/9.x/pixel-art/svg",
       };
     } catch (error) {
       console.error("Error al decodificar el token", error);
@@ -132,7 +132,7 @@ export default function Navbar({ isAuthenticated }: NavbarProps) {
             >
               Novedades
             </Link>
-  }
+          }
         </li>
       </ul>
 
