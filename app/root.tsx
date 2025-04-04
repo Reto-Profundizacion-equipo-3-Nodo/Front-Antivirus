@@ -75,7 +75,7 @@ import "./tailwind.css";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import { verifyToken } from "./services/authService";
-import WompiButton from "./components/WompiButton";
+import CombinedButton from "./components/WompiButton";
 
 /**
  * Tipado del loader
@@ -130,7 +130,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <body>
         <Navbar isAuthenticated={isAuthenticated} />
         {children}
-        <WompiButton />
+        <CombinedButton />
         <Footer />
         <ScrollRestoration />
         <Scripts />
