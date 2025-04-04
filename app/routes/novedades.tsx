@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { LoaderFunction, useLoaderData } from "@remix-run/react";
+import { useEffect, useState } from "react";
+import { useLoaderData } from "@remix-run/react";
 import OportunitiesFilter from "~/components/OportunidadesFilter/OportunitiesFilter";
 
 type LoaderData = {
@@ -12,40 +12,13 @@ type LoaderData = {
   }>;
 };
 
-export const loader: LoaderFunction = () => {
+export const loader = () => {
   return {
     message: "Ultimas Novedades",
     media: [
-      "/public/images/comfamalogo.png",
-      "/public/images/LogoNodo.png",
-      "/public/images/comfamalogo.png",
-      "/public/images/LogoNodo.png",
-    ],
-    items: [
-      {
-        heading: "Alianza Empresarial - Comfama",
-        img: "/public/images/comfamalogo.png",
-        content:
-          "Se enfoca en promover el empleo de mujeres y jóvenes, facilitando su acceso a oportunidades laborales dignas. A través de programas de capacitación en habilidades digitales, liderazgo y emprendimiento...",
-      },
-      {
-        heading: "Alianza Empresarial - Comfama",
-        img: "/public/images/comfamalogo.png",
-        content:
-          "Se enfoca en promover el empleo de mujeres y jóvenes, facilitando su acceso a oportunidades laborales dignas. A través de programas de capacitación en habilidades digitales, liderazgo y emprendimiento...",
-      },
-      {
-        heading: "Alianza Empresarial - Comfama",
-        img: "/public/images/comfamalogo.png",
-        content:
-          "Se enfoca en promover el empleo de mujeres y jóvenes, facilitando su acceso a oportunidades laborales dignas. A través de programas de capacitación en habilidades digitales, liderazgo y emprendimiento...",
-      },
-      {
-        heading: "Alianza Empresarial - Comfama",
-        img: "/public/images/comfamalogo.png",
-        content:
-          "Se enfoca en promover el empleo de mujeres y jóvenes, facilitando su acceso a oportunidades laborales dignas. A través de programas de capacitación en habilidades digitales, liderazgo y emprendimiento...",
-      },
+      "/public/images/Comfama-carrusel.jpg",
+      "/public/images/nodo-carrusel.jpg",
+      "/public/images/Sapiencia-carrusel.jpg",
     ],
   };
 };
@@ -53,9 +26,7 @@ export const loader: LoaderFunction = () => {
 export default function Novedades() {
   const data = useLoaderData<LoaderData>();
   const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
-  const [expanded, setExpanded] = useState<boolean[]>(
-    new Array(data.items.length).fill(false)
-  );
+
 
   const nextMedia = () => {
     setCurrentMediaIndex((prev) => (prev + 1) % data.media.length);
@@ -67,9 +38,12 @@ export default function Novedades() {
     );
   };
 
-  const toggleExpand = (index: number) => {
-    setExpanded((prev) => prev.map((exp, i) => (i === index ? !exp : exp)));
-  };
+  useEffect(() => {
+    const intervalId = setInterval(nextMedia, 4000); // Cambiar cada 3 segundos
+
+    // Limpiar el intervalo cuando el componente se desmonte
+    return () => clearInterval(intervalId);
+  }, [data.media.length]);
 
   return (
     <div className="p-8 bg-[#e2e8f0] min-h-screen">
@@ -80,12 +54,12 @@ export default function Novedades() {
       <p className="text-center text-lg text-gray-700 mb-4">{data.message}</p>
 
       <div className="flex flex-col items-center mb-12">
-        <div className="relative w-full max-w-4xl overflow-hidden rounded-2xl shadow-xl">
+        <div className="relative w-full overflow-hidden rounded-2xl shadow-xl">
           <div className="flex transition-transform duration-500 ease-out">
             <img
               src={data.media[currentMediaIndex]}
               alt="Carousel"
-              className="w-full h-[500px] object-cover rounded-2xl transform transition-all duration-300 hover:scale-105"
+              className="w-full h-[250px] object-cover rounded-2xl transform transition-all duration-300 hover:scale-105 filter brightness-90"
             />
           </div>
 
@@ -132,9 +106,8 @@ export default function Novedades() {
               <div
                 key={index}
                 onClick={() => setCurrentMediaIndex(index)}
-                className={`w-3 h-3 rounded-full cursor-pointer transition-all duration-300 ${
-                  currentMediaIndex === index ? "bg-white w-6" : "bg-white/50"
-                }`}
+                className={`w-3 h-3 rounded-full cursor-pointer transition-all duration-300 ${currentMediaIndex === index ? "bg-white w-6" : "bg-white/50"
+                  }`}
               />
             ))}
           </div>
@@ -143,7 +116,7 @@ export default function Novedades() {
 
       <OportunitiesFilter />
 
-      <div className="flex flex-wrap justify-center gap-6 mt-8">
+      {/* <div className="flex flex-wrap justify-center gap-6 mt-8">
         {data.items.map((item, index) => (
           <div
             key={index}
@@ -182,7 +155,7 @@ export default function Novedades() {
             </div>
           </div>
         ))}
-      </div>
+      </div> */}
     </div>
   );
 }

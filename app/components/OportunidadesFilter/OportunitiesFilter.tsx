@@ -136,7 +136,7 @@ const FiltroOportunidades = () => {
             </h2>
 
             {/* Mostrar las oportunidades */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-20">
+            <div className="flex flex-wrap justify-center gap-6 mt-8">
                 {oportunidades.length > 0 ? (
                     oportunidades.map((opportunity) => (
                         <OpportunityCard key={opportunity.id} opportunity={opportunity} />
