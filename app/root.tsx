@@ -69,17 +69,36 @@ import {
   useLoaderData,
 } from "@remix-run/react";
 import type { LinksFunction, LoaderFunction } from "@remix-run/node";
+import { json } from "@remix-run/node"; // Importamos `json` correctamente
 
 import "./tailwind.css";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import { verifyToken } from "./services/authService";
 
+/**
+ * Tipado del loader
+ */
+interface LoaderData {
+  isAuthenticated: boolean;
+}
+
+/**
+ * Loader para verificar la autenticación
+ */
 export const loader: LoaderFunction = async ({ request }) => {
-  const isAuthenticated = await verifyToken(request);
-  return { isAuthenticated }; // Devuelve el estado de autenticación
+  try {
+    const isAuthenticated = await verifyToken(request);
+    return json<LoaderData>({ isAuthenticated });
+  } catch (error) {
+    console.error("Error en la autenticación:", error);
+    return json<LoaderData>({ isAuthenticated: false }); // Evita fallos si hay un error
+  }
 };
 
+/**
+ * Links para fuentes y estilos
+ */
 export const links: LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
@@ -93,9 +112,14 @@ export const links: LinksFunction = () => [
   },
 ];
 
+/**
+ * Componente Layout que envuelve la aplicación
+ */
 export function Layout({ children }: { children: React.ReactNode }) {
+  const { isAuthenticated } = useLoaderData<LoaderData>() || { isAuthenticated: false }; // Valor por defecto
+
   return (
-    <html lang="en">
+    <html lang="es">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -111,6 +135,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
+/**
+ * Componente principal de la aplicación
+ */
 export default function App() {
   // ✅ Llamamos aquí a useLoaderData() y pasamos la autenticación al Navbar
   const { isAuthenticated } = useLoaderData<{ isAuthenticated: boolean }>() || { isAuthenticated: false };

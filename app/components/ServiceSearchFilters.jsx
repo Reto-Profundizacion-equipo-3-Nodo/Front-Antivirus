@@ -1,78 +1,16 @@
 import { motion } from "framer-motion";
-import React, { useState, useEffect } from "react";
+import React from "react";
 import styles from "../styles/services.module.css";
 
 /**
- * Componente para filtrar y buscar servicios con funcionalidad completa.
- * @param {Object} props 
- * @param {Array} props.services - Array de todos los servicios disponibles
- * @param {Function} props.onFilteredServicesChange - Función para actualizar los servicios filtrados
+ * Componente para filtrar y buscar servicios.
+ * Proporciona una interfaz visual para filtrado sin funcionalidad activa.
+ * Este componente actúa como placeholder para futura implementación de funcionalidad.
  */
-const ServiceSearchFilters = ({ services = [], onFilteredServicesChange }) => {
-  // Estados para los diferentes filtros
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("Todos");
-  const [selectedLocation, setSelectedLocation] = useState("Todas");
-  const [yearValue, setYearValue] = useState(2025);
-  
-  // Categorías y ubicaciones disponibles
+const ServiceSearchFilters = () => {
+  // Categorías de ejemplo para los filtros (solo visuales)
   const categories = ["Todos", "Educación", "Prevención", "Apoyo", "Investigación"];
   const locations = ["Todas", "En línea", "Presencial", "Híbrido"];
-  
-  // Aplicar filtros cuando cambien los valores
-  useEffect(() => {
-    applyFilters();
-  }, [searchTerm, selectedCategory, selectedLocation, yearValue]);
-  
-  // Función para aplicar todos los filtros
-  const applyFilters = () => {
-    let filteredServices = [...services];
-    
-    // Filtrar por término de búsqueda
-    if (searchTerm.trim() !== "") {
-      filteredServices = filteredServices.filter(service => 
-        service.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-        service.description.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-    
-    // Filtrar por categoría
-    if (selectedCategory !== "Todos") {
-      filteredServices = filteredServices.filter(service => 
-        service.category === selectedCategory
-      );
-    }
-    
-    // Filtrar por ubicación/modalidad
-    if (selectedLocation !== "Todas") {
-      filteredServices = filteredServices.filter(service => 
-        service.location === selectedLocation
-      );
-    }
-    
-    // Filtrar por año de lanzamiento
-    filteredServices = filteredServices.filter(service => 
-      service.launchYear <= yearValue
-    );
-    
-    // Actualizar los servicios filtrados mediante la prop onFilteredServicesChange
-    if (onFilteredServicesChange) {
-      onFilteredServicesChange(filteredServices);
-    }
-  };
-  
-  // Función para restablecer todos los filtros
-  const resetFilters = () => {
-    setSearchTerm("");
-    setSelectedCategory("Todos");
-    setSelectedLocation("Todas");
-    setYearValue(2025);
-    
-    // Restablecer a todos los servicios
-    if (onFilteredServicesChange) {
-      onFilteredServicesChange(services);
-    }
-  };
   
   return (
     <motion.div 
@@ -90,8 +28,6 @@ const ServiceSearchFilters = ({ services = [], onFilteredServicesChange }) => {
             type="text"
             placeholder="Buscar servicios..."
             className={styles.searchInput}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
             aria-label="Buscar servicios"
           />
           <div className={styles.searchIcon}>
@@ -111,11 +47,10 @@ const ServiceSearchFilters = ({ services = [], onFilteredServicesChange }) => {
             {categories.map((category, index) => (
               <motion.button
                 key={index}
-                className={`${styles.filterPill} ${category === selectedCategory ? styles.filterPillActive : ""}`}
+                className={`${styles.filterPill} ${index === 0 ? styles.filterPillActive : ""}`}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => setSelectedCategory(category)}
-                aria-pressed={category === selectedCategory}
+                aria-pressed={index === 0}
               >
                 {category}
               </motion.button>
@@ -130,11 +65,10 @@ const ServiceSearchFilters = ({ services = [], onFilteredServicesChange }) => {
             {locations.map((location, index) => (
               <motion.button
                 key={index}
-                className={`${styles.filterPill} ${location === selectedLocation ? styles.filterPillActive : ""}`}
+                className={`${styles.filterPill} ${index === 0 ? styles.filterPillActive : ""}`}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => setSelectedLocation(location)}
-                aria-pressed={location === selectedLocation}
+                aria-pressed={index === 0}
               >
                 {location}
               </motion.button>
@@ -145,7 +79,7 @@ const ServiceSearchFilters = ({ services = [], onFilteredServicesChange }) => {
         {/* Filtro por año (range slider) */}
         <div className={styles.filterGroup}>
           <label className={styles.filterLabel} htmlFor="yearRange">
-            Año de lanzamiento: {yearValue}
+            Año de lanzamiento
           </label>
           <input
             id="yearRange"
@@ -153,11 +87,10 @@ const ServiceSearchFilters = ({ services = [], onFilteredServicesChange }) => {
             className={styles.rangeSlider}
             min="2018"
             max="2025"
-            value={yearValue}
-            onChange={(e) => setYearValue(parseInt(e.target.value))}
+            defaultValue="2025"
             aria-valuemin="2018"
             aria-valuemax="2025"
-            aria-valuenow={yearValue}
+            aria-valuenow="2025"
           />
           <div className={styles.rangeValues}>
             <span>2018</span>
@@ -172,7 +105,6 @@ const ServiceSearchFilters = ({ services = [], onFilteredServicesChange }) => {
           className={styles.resetButton}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          onClick={resetFilters}
           aria-label="Limpiar todos los filtros"
         >
           Limpiar filtros
@@ -181,7 +113,6 @@ const ServiceSearchFilters = ({ services = [], onFilteredServicesChange }) => {
           className={styles.applyButton}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          onClick={applyFilters}
           aria-label="Aplicar los filtros seleccionados"
         >
           Aplicar filtros
