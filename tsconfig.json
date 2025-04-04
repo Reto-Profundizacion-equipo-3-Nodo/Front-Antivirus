@@ -6,7 +6,7 @@
     "server/**/*.tsx",
     "client/**/*.ts",
     "client/**/*.tsx"
-  ],
+, "app/routes/dashboard.jsx"  ],
   "compilerOptions": {
     "lib": ["DOM", "DOM.Iterable", "ES2022"],
     "types": ["@remix-run/node", "vite/client", "@types/react", "@types/react-dom"],

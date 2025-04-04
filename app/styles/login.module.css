@@ -309,6 +309,39 @@
   background: #165dbb;
 }
 
+/* Estilos para mensajes de error */
+.errorMessage {
+  background-color: rgba(220, 53, 69, 0.1);
+  color: #dc3545;
+  padding: 10px 15px;
+  border-radius: 5px;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  border-left: 3px solid #dc3545;
+  font-size: 14px;
+}
+
+.errorIcon {
+  margin-right: 8px;
+  font-size: 16px;
+  min-width: 16px;
+}
+
+/* Estilos para inputs con error */
+.inputError {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.inputError .icon {
+  color: #dc3545;
+}
+
+.inputError input {
+  border-color: #dc3545;
+}
+
 /* Responsividad */
 @media (max-width: 768px) {
   .imageContainer {
