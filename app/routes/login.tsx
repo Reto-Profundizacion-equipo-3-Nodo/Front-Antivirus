@@ -1,11 +1,17 @@
 //Importamos los módulos necesarios
 import { useState } from "react";
-import { Form, Link } from "@remix-run/react";
+import { Form, Link, useNavigate } from "@remix-run/react";
 import { FcGoogle } from "react-icons/fc";
-import { FaFacebook, FaEnvelope, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
+import {
+  FaFacebook,
+  FaEnvelope,
+  FaLock,
+  FaEye,
+  FaEyeSlash,
+} from "react-icons/fa";
 import { motion } from "framer-motion";
-import styles from '../styles/login.module.css';
-
+import styles from "../styles/login.module.css";
+import { loginUser } from "~/services/authService";
 
 // Componente para la entrada de contraseña con opción de mostrar u ocultar
 const PasswordInput = () => {
@@ -38,18 +44,26 @@ const PasswordInput = () => {
 
 // Componente para los botones de inicio de sesión con redes sociales
 const SocialButtons = () => (
-  <motion.div 
-    className={styles.socialButtons} 
+  <motion.div
+    className={styles.socialButtons}
     initial={{ opacity: 0, y: 20 }} // Inicia con opacidad 0 y desplazamiento de 20px
     animate={{ opacity: 1, y: 0 }} // Aparece con opacidad 1 y sin desplazamiento
     transition={{ duration: 0.5 }} // Duración de la animación
   >
     {/* Botón para ingresar con Google */}
-    <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className={styles.googleButton}>
+    <motion.button
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      className={styles.googleButton}
+    >
       <FcGoogle /> <span>Ingresa con Google</span>
     </motion.button>
     {/* Botón para ingresar con Facebook */}
-    <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className={styles.facebookButton}>
+    <motion.button
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      className={styles.facebookButton}
+    >
       <FaFacebook /> <span>Ingresa con Facebook</span>
     </motion.button>
   </motion.div>
@@ -57,6 +71,21 @@ const SocialButtons = () => (
 
 // Componente principal de la página de inicio de sesión
 export default function LoginPage() {
+  const navigate = useNavigate();
+  const onSubmit = async (event) => {
+    event.preventDefault(); // Prevenir el comportamiento por defecto del formulario
+    const formData = new FormData(event.currentTarget); // Obtener los datos del formulario
+    const email = formData.get("email"); // Obtener el email
+    const password = formData.get("password"); // Obtener la contraseña
+
+    const response = await loginUser(email, password); // Llamar a la función de inicio de sesión
+
+    if (response.token) {
+      // setMessage({ text: "Usuario registrado correctamente", type: "success" });
+      document.cookie = `token=${response.token}; path=/`;
+      return navigate("/");
+    }
+  };
   return (
     <div className={styles.bgLogin}>
       <div className={styles.overlay}></div> {/* Capa de fondo */}
@@ -64,7 +93,7 @@ export default function LoginPage() {
         <div className={styles.loginCard}>
           {/* Contenedor de imagen animada */}
           <div className={styles.imageContainer}>
-            <motion.img 
+            <motion.img
               src="/Images/Javi.png"
               alt="Javi"
               className={styles.image}
@@ -74,16 +103,29 @@ export default function LoginPage() {
           </div>
           <div className={styles.formContainer}>
             {/* Título */}
-            <h2 className={styles.title}>Bienvenido a tu <br /><span>Banco de oportunidades</span></h2>
+            <h2 className={styles.title}>
+              Bienvenido a tu <br />
+              <span>Banco de oportunidades</span>
+            </h2>
             {/* Botones de redes sociales */}
             <SocialButtons />
             {/* Separador */}
-            <div className={styles.separator}><hr /><span>o</span><hr /></div>
+            <div className={styles.separator}>
+              <hr />
+              <span>o</span>
+              <hr />
+            </div>
             {/* Formulario de inicio de sesión */}
-            <Form method="post" className={styles.form}>
+            <Form onSubmit={onSubmit} method="post" className={styles.form}>
               <div className={styles.inputContainer}>
                 <FaEnvelope className={styles.icon} /> {/* Ícono de email */}
-                <input type="email" name="email" placeholder="Correo Electrónico" required className={styles.input} />
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Correo Electrónico"
+                  required
+                  className={styles.input}
+                />
               </div>
               <PasswordInput /> {/* Campo de contraseña */}
               <div className={styles.options}>
@@ -91,16 +133,26 @@ export default function LoginPage() {
                   <input type="checkbox" className={styles.checkbox} />
                   <span>Recordarme</span>
                 </label>
-                <Link to="/forgot-password" className={styles.link}>Olvidé mi contraseña</Link>
+                <Link to="/forgot-password" className={styles.link}>
+                  Olvidé mi contraseña
+                </Link>
               </div>
               {/* Botón de inicio de sesión */}
-              <motion.button type="submit" className={styles.loginButton} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <motion.button
+                type="submit"
+                className={styles.loginButton}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
                 Iniciar Sesión
               </motion.button>
             </Form>
             {/* Texto de registro */}
             <div className={styles.registerText}>
-              ¿No tienes una cuenta? <Link to="/register" className={styles.link}>Regístrate</Link>
+              ¿No tienes una cuenta?{" "}
+              <Link to="/register" className={styles.link}>
+                Regístrate
+              </Link>
             </div>
           </div>
         </div>
