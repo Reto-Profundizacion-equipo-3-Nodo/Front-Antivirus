@@ -83,7 +83,7 @@ export default function LoginPage() {
     if (response.token) {
       // setMessage({ text: "Usuario registrado correctamente", type: "success" });
       document.cookie = `token=${response.token}; path=/`;
-      return navigate("/");
+      return navigate("/dashboard");
     }
   };
   return (
