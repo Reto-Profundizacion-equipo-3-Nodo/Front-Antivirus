@@ -58,7 +58,7 @@ const FormRegister = () => {
             if (response.token) {
                 setMessage({ text: "Usuario registrado correctamente", type: "success" });
                 document.cookie = `token=${response.token}; path=/`;
-                return navigate("/");
+                return navigate("/dashboard");
             }
         } catch (error) {
             if ((error as any).message === "El email ya está registrado.") {

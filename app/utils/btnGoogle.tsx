@@ -47,7 +47,7 @@ export default function BtnGoogle() {
             }
 
             // Redirigir a la página de inicio
-            navigate('/');
+            navigate('/dashboard');
         }
     };
 

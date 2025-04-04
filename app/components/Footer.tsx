@@ -69,7 +69,7 @@ export default function Footer() {
                 className="relative flex items-center justify-center w-12 h-12 rounded-full transition duration-300 text-[#292525] hover:bg-[#FFBA08]"
               >
                 <img
-                  src="public/images/whatsapp.png"
+                  src="/Images/whatsapp.png"
                   alt="WhatsApp"
                   className="w-7 h-7"
                 />
