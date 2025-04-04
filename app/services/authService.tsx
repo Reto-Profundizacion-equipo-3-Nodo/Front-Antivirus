@@ -161,253 +161,166 @@
 //         };
 //     }
 // }
-import { tokenCookie } from "../utils/cookies";
+/**
+ * Servicio de autenticación
+ * Maneja las operaciones relacionadas con autenticación y gestión de tokens
+ */
 
-interface RegisterUserData {
-  name: string;
-  email: string;
-  password: string;
-  rol: string;
-  celular: string;
-  fechaNacimiento: string;
-}
+// Define la URL base de la API
+const API_URL = 'http://localhost:5261/api';
 
-interface AuthResponse {
+// Interfaces para las respuestas de autenticación
+export interface AuthSuccessResponse {
   token: string;
-  success?: boolean;
-  message?: string;
-  user?: any;
 }
 
-interface ErrorResponse {
-  message: string;
+export interface AuthErrorResponse {
+  error: string;
 }
 
-// URL base para las llamadas a la API (Idealmente en una variable de entorno)
-const API_URL = "http://localhost:5261/api";
+export type AuthResponse = AuthSuccessResponse | AuthErrorResponse;
 
 /**
- * 🔹 Registra un usuario en la API
- * @param userData Datos del usuario
- * @returns Token de autenticación
+ * Verifica si una respuesta contiene un error
+ * @param response - Respuesta de autenticación a verificar
+ * @returns Boolean indicando si la respuesta es un error
  */
-export const registerUser = async (
-  userData: RegisterUserData
-): Promise<AuthResponse> => {
-  try {
-    const response = await fetch(`${API_URL}/Auth/register`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(userData),
-    });
-
-    if (!response.ok) {
-      const errorData: ErrorResponse = await response.json();
-      throw new Error(errorData.message || "Error al registrar usuario");
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error("❌ Error en registerUser:", error);
-    throw new Error(error instanceof Error ? error.message : "Error de conexión");
-  }
-};
+export function isErrorResponse(response: AuthResponse): response is AuthErrorResponse {
+  return 'error' in response;
+}
 
 /**
- * 🔹 Inicia sesión en la API
- * @param email Correo electrónico
- * @param password Contraseña
- * @returns Token de autenticación y datos del usuario
+ * Almacena el token de autenticación en una cookie
+ * @param token - Token JWT a almacenar
+ * @param expirationDays - Días hasta la expiración (por defecto 1 día)
  */
-export const loginUser = async (
-  email: string, 
-  password: string
-): Promise<AuthResponse> => {
-  try {
-    const response = await fetch(`${API_URL}/Auth/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
-
-    if (!response.ok) {
-      const errorData: ErrorResponse = await response.json();
-      throw new Error(errorData.message || "Error al iniciar sesión");
-    }
-
-    const result = await response.json();
-    
-    // Registrar el inicio de sesión
-    console.log(`✅ Usuario autenticado: ${email}`);
-    
-    return result;
-  } catch (error) {
-    console.error("❌ Error en loginUser:", error);
-    throw new Error(error instanceof Error ? error.message : "Error de conexión");
-  }
-};
-
-/**
- * 🔹 Inicia el flujo de autenticación con Google
- * Redirige al usuario a la página de autenticación de Google
- */
-export const loginWithGoogle = () => {
-  // Obtener la URL actual para el callback después de la autenticación
-  const redirectUri = `${window.location.origin}/auth/google/callback`;
+export function saveAuthToken(token: string, expirationDays: number = 1): void {
+  const expirationMs = expirationDays * 24 * 60 * 60 * 1000;
+  const expirationDate = new Date(Date.now() + expirationMs);
+  document.cookie = `authToken=${token}; path=/; expires=${expirationDate.toUTCString()}; SameSite=Lax`;
   
-  // Redirigir al usuario al endpoint de login con Google
-  window.location.href = `${API_URL}/Auth/google-login?redirectUri=${encodeURIComponent(redirectUri)}`;
-};
+  // También guardamos en localStorage como respaldo
+  localStorage.setItem('authToken', token);
+}
 
 /**
- * 🔹 Inicia el flujo de autenticación con Facebook
- * Redirige al usuario a la página de autenticación de Facebook
+ * Obtiene el token de autenticación almacenado
+ * @returns El token si existe, undefined si no existe
  */
-export const loginWithFacebook = () => {
-  // Obtener la URL actual para el callback después de la autenticación
-  const redirectUri = `${window.location.origin}/auth/facebook/callback`;
-  
-  // Redirigir al usuario al endpoint de login con Facebook
-  window.location.href = `${API_URL}/Auth/facebook-login?redirectUri=${encodeURIComponent(redirectUri)}`;
-};
-
-/**
- * 🔹 Procesa el callback de la autenticación OAuth (Google/Facebook)
- * @param provider Proveedor OAuth (google/facebook)
- * @param code Código de autorización
- * @returns Token de autenticación y datos del usuario
- */
-export const processOAuthCallback = async (
-  provider: string,
-  code: string
-): Promise<AuthResponse> => {
-  try {
-    const response = await fetch(`${API_URL}/Auth/${provider}-callback`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ code }),
-    });
-
-    if (!response.ok) {
-      const errorData: ErrorResponse = await response.json();
-      throw new Error(errorData.message || "Error en autenticación con proveedor externo");
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error(`❌ Error en processOAuthCallback (${provider}):`, error);
-    throw new Error(error instanceof Error ? error.message : "Error de conexión");
+export function getAuthToken(): string | undefined {
+  // Primero intentamos obtener de las cookies
+  const cookies = document.cookie.split(';');
+  const authCookie = cookies.find(cookie => cookie.trim().startsWith('authToken='));
+  if (authCookie) {
+    return authCookie.split('=')[1];
   }
-};
+  
+  // Si no está en las cookies, intentamos obtenerlo del localStorage
+  return localStorage.getItem('authToken') || undefined;
+}
 
 /**
- * 🔹 Verifica si el usuario está autenticado
- * @param request Petición HTTP
- * @returns Boolean indicando si el token es válido
+ * Elimina el token de autenticación
  */
-export const verifyToken = async (request: Request): Promise<boolean> => {
+export function removeAuthToken(): void {
+  document.cookie = 'authToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax';
+  localStorage.removeItem('authToken');
+}
+
+/**
+ * Verifica si el usuario está autenticado
+ * @returns Boolean indicando si el usuario está autenticado
+ */
+export function isAuthenticated(): boolean {
+  return Boolean(getAuthToken());
+}
+
+/**
+ * Inicia sesión de usuario con email y password
+ * @param email - Email del usuario
+ * @param password - Contraseña del usuario
+ * @returns Promise con el token o un mensaje de error
+ */
+export const loginUser = async (email: string, password: string): Promise<AuthResponse> => {
   try {
-    const cookieHeader = request.headers.get("Cookie");
-    const token = await tokenCookie.parse(cookieHeader);
-
-    if (!token) {
-      console.warn("⚠️ No se encontró token");
-      return false;
-    }
-
-    // Validar token con el backend
-    const response = await fetch(`${API_URL}/Auth/validate-token`, {
-      method: "POST",
+    // const response = await fetch(`${API_URL}/auth/login`, {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify({ email, password }),
+    //   credentials: 'include', // Importante para el manejo de cookies
+    // });
+    
+    const response = await fetch(`${API_URL}/auth/login`, {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
       },
+      body: JSON.stringify({ email, password }),
+      // Sin credentials: 'include'
     });
-
+    
+    const data = await response.json();
+    
     if (!response.ok) {
-      console.warn("⚠️ Token inválido");
-      return false;
+      return { error: data.message || 'Error en la autenticación' };
     }
+    
+    // Almacenamos el token en una cookie y localStorage
+    saveAuthToken(data.token);
+    
+    return { token: data.token };
+  } catch (error: unknown) {
+    console.error('Error en loginUser:', error);
+    return {
+      error: error instanceof Error ? error.message : 'Error al conectar con el servidor'
+    };
+  }
+};
 
-    console.log("✅ Token válido");
-    return true;
+/**
+ * Cierra la sesión del usuario
+ */
+export const logoutUser = (): void => {
+  removeAuthToken();
+  // Opcionalmente, podemos llamar al endpoint de logout en el backend
+  // fetch(`${API_URL}/auth/logout`, { method: 'POST', credentials: 'include' });
+};
+
+/**
+ * Verifica la validez del token con el backend
+ * @returns Promise<boolean> indicando si el token es válido
+ */
+export const verifyTokenWithBackend = async (): Promise<boolean> => {
+  const token = getAuthToken();
+  if (!token) return false;
+  
+  try {
+    const response = await fetch(`${API_URL}/auth/verify`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      credentials: 'include',
+    });
+    
+    return response.ok;
   } catch (error) {
-    console.error("❌ Error en verifyToken:", error);
+    console.error('Error al verificar token:', error);
     return false;
   }
 };
 
-/**
- * 🔹 Cierra sesión del usuario
- * @returns Estado del cierre de sesión
- */
-export const logout = async (): Promise<AuthResponse> => {
-  try {
-    // Obtener el token de la cookie en el navegador
-    const token = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("token="))
-      ?.split("=")[1];
-
-    if (!token) {
-      console.warn("⚠️ No hay token para cerrar sesión");
-      return {
-        success: true,
-        message: "No había sesión activa",
-        token: "",
-      };
-    }
-
-    // Enviar petición para cerrar sesión en el backend
-    const response = await fetch(`${API_URL}/Auth/logout`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error("Error al cerrar sesión en el servidor");
-    }
-
-    console.log("✅ Sesión cerrada en el servidor");
-    
-    return {
-      success: true,
-      message: "Sesión cerrada exitosamente",
-      token: "",
-    };
-  } catch (error) {
-    console.error("❌ Error en logout:", error);
-    return {
-      success: false,
-      message: error instanceof Error ? error.message : "Error al cerrar sesión",
-      token: "",
-    };
-  }
+// Placeholders para futuras implementaciones
+export const loginWithGoogle = async (code: string): Promise<AuthResponse> => {
+  return {
+    error: 'Inicio de sesión con Google no implementado en el backend'
+  };
 };
 
-/**
- * 🔹 Obtiene información del usuario actual
- * @param token Token de autenticación
- * @returns Datos del usuario
- */
-export const getCurrentUser = async (token: string): Promise<any> => {
-  try {
-    const response = await fetch(`${API_URL}/Auth/me`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error("Error al obtener información del usuario");
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error("❌ Error en getCurrentUser:", error);
-    throw new Error(error instanceof Error ? error.message : "Error de conexión");
-  }
+export const loginWithFacebook = async (accessToken: string): Promise<AuthResponse> => {
+  return {
+    error: 'Inicio de sesión con Facebook no implementado en el backend'
+  };
 };
