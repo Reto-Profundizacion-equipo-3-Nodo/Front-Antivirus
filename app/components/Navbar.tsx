@@ -125,14 +125,14 @@ export default function Navbar({ isAuthenticated }: NavbarProps) {
         </li>
 
         <li className="relative group">
-          {isAuthenticated &&
+          
             <Link
               to="/novedades"
               className="hover:text-yellow-300 block pb-2 transform transition-all duration-300 hover:scale-110 origin-bottom"
             >
               Novedades
             </Link>
-          }
+          
         </li>
       </ul>
 
