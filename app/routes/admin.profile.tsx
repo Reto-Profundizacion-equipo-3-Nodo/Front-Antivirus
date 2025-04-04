@@ -1,7 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getUsers, updateUser } from "~/services/authService";
 
 export default function AdminProfile() {
   const [view, setView] = useState("admin");
+  const [users, setUsers] = useState([]);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<any>(null);
 
   const adminData = {
     name: "Administrador",
@@ -11,36 +16,48 @@ export default function AdminProfile() {
     rol: "Super Admin",
   };
 
-  const getButtonClasses = (buttonName: string) => {
-    return `px-4 py-2 rounded border ${view === buttonName ? "bg-[#06407A] text-white" : "bg-[#06407A]/30  text-black"}`;
+  useEffect(() => {
+    if (view === "users") {
+      fetchData();
+    }
+  }, [view]);
+
+  const fetchData = async () => {
+    const result = await getUsers();
+    if (result.length > 0) {
+      setUsers(result);
+    }
   };
 
-  const usersData = [
-    {
-      id: 1,
-      name: "Carlos Perez",
-      email: "carlos.perez@example.com",
-      celular: "987654321",
-      fechaNacimiento: "1990-05-10",
-      rol: "user",
-    },
-    {
-      id: 2,
-      name: "Maria Rodriguez",
-      email: "maria.rodriguez@example.com",
-      celular: "123123123",
-      fechaNacimiento: "1995-08-21",
-      rol: "admin",
-    },
-    {
-      id: 3,
-      name: "Juan Lopez",
-      email: "juan.lopez@example.com",
-      celular: "456789123",
-      fechaNacimiento: "1988-12-15",
-      rol: "user",
-    },
-  ];
+  const getButtonClasses = (buttonName: string) => {
+    return `px-4 py-2 rounded border ${
+      view === buttonName
+        ? "bg-[#06407A] text-white"
+        : "bg-[#06407A]/30  text-black"
+    }`;
+  };
+
+  const openEditModal = (userId: number) => {
+    const userToEdit = users.find((user) => user.id === userId);
+    if (!userToEdit) return;
+    setSelectedUser(userToEdit);
+    setIsModalOpen(true);
+  };
+
+  const closeEditModal = () => {
+    setIsModalOpen(false);
+    setSelectedUser(null);
+  };
+
+  const handleEditChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setSelectedUser((prev: any) => ({ ...prev, [name]: value }));
+  };
+
+  const saveUserChanges = async() => {
+    const result = await updateUser(selectedUser.id, selectedUser);
+    console.log(result);
+  };
 
   const opportunitiesData = [
     {
@@ -75,11 +92,117 @@ export default function AdminProfile() {
     },
   ];
 
+  console.log(selectedUser)
+
   return (
     <div className="min-h-screen p-6  text-[#222D56] font-[Renograre Regular]">
       <h1 className="text-3xl text-center mb-6 font-[Impact]">
         Bienvenido, {adminData.name}
       </h1>
+
+      {isModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded shadow-lg w-96">
+            <h2 className="text-xl font-bold mb-4">Editar Usuario</h2>
+            <form>
+              <div className="mb-4">
+                <label
+                  className="block text-sm font-medium mb-1"
+                  htmlFor="name"
+                >
+                  Nombre
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={selectedUser?.name || ""}
+                  onChange={handleEditChange}
+                  className="w-full px-3 py-2 border rounded"
+                />
+              </div>
+              <div className="mb-4">
+                <label
+                  className="block text-sm font-medium mb-1"
+                  htmlFor="email"
+                >
+                  Email
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={selectedUser?.email || ""}
+                  onChange={handleEditChange}
+                  className="w-full px-3 py-2 border rounded"
+                />
+              </div>
+              <div className="mb-4">
+                <label
+                  className="block text-sm font-medium mb-1"
+                  htmlFor="celular"
+                >
+                  Celular
+                </label>
+                <input
+                  type="text"
+                  id="celular"
+                  name="celular"
+                  value={selectedUser?.celular || ""}
+                  onChange={handleEditChange}
+                  className="w-full px-3 py-2 border rounded"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-1" htmlFor="rol">
+                  Rol
+                </label>
+                <input
+                  type="text"
+                  id="rol"
+                  name="rol"
+                  value={selectedUser?.rol || ""}
+                  onChange={handleEditChange}
+                  className="w-full px-3 py-2 border rounded"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-1" htmlFor="rol">
+                  Fecha de Nacimiento
+                </label>
+                <input
+                  type="date"
+                  id="fechaNacimiento"
+                  name="fechaNacimiento"
+                  value={
+                    selectedUser?.fechaNacimiento
+                      ? selectedUser.fechaNacimiento.split("T")[0]
+                      : ""
+                  }
+                  onChange={handleEditChange}
+                  className="w-full px-3 py-2 border rounded"
+                />
+              </div>
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  onClick={closeEditModal}
+                  className="mr-2 bg-gray-300 text-black px-4 py-2 rounded"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  onClick={saveUserChanges}
+                  className="bg-[#06407A] text-white px-4 py-2 rounded"
+                >
+                  Guardar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
       <div className="flex justify-center gap-4 mb-6">
         <button
           className={getButtonClasses("admin")}
@@ -133,7 +256,7 @@ export default function AdminProfile() {
               </tr>
             </thead>
             <tbody>
-              {usersData.map((user) => (
+              {users.map((user) => (
                 <tr key={user.id}>
                   <td className="border border-gray-300 px-4 py-2">
                     {user.name}
@@ -148,7 +271,10 @@ export default function AdminProfile() {
                     {user.rol}
                   </td>
                   <td className="border border-gray-300 px-4 py-2">
-                    <button className="mr-2 bg-[#FFBA08] text-black px-2 py-1 rounded">
+                    <button
+                      className="mr-2 bg-[#FFBA08] text-black px-2 py-1 rounded"
+                      onClick={() => openEditModal(user.id)}
+                    >
                       Editar
                     </button>
                     <button className="bg-[#D00000] text-white px-2 py-1 rounded">
