@@ -28,27 +28,27 @@ export default function Navbar({ isAuthenticated }: NavbarProps) {
   const userMenuRef = useRef<HTMLDivElement>(null);
   const userButtonRef = useRef<HTMLButtonElement>(null);
 
-   useEffect(() => {
-     const handleClickOutside = (event: MouseEvent) => {
-       if (!userMenuRef.current || !userButtonRef.current) return;
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!userMenuRef.current || !userButtonRef.current) return;
 
-       const target = event.target as Node;
-       const isClickInsideMenu = userMenuRef.current.contains(target);
-       const isClickOnButton = userButtonRef.current.contains(target);
+      const target = event.target as Node;
+      const isClickInsideMenu = userMenuRef.current.contains(target);
+      const isClickOnButton = userButtonRef.current.contains(target);
 
-       if (!isClickInsideMenu && !isClickOnButton) {
-         setIsUserMenuOpen(false);
-       }
-     };
+      if (!isClickInsideMenu && !isClickOnButton) {
+        setIsUserMenuOpen(false);
+      }
+    };
 
-     document.addEventListener("mousedown", handleClickOutside);
-     return () => document.removeEventListener("mousedown", handleClickOutside);
-   }, []);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
-   const toggleTheme = () => {
-     setIsDarkMode(!isDarkMode);
-     document.documentElement.classList.toggle("dark");
-   };
+  const toggleTheme = () => {
+    setIsDarkMode(!isDarkMode);
+    document.documentElement.classList.toggle("dark");
+  };
 
   // Obtener los datos del usuario al cargar la página
   useEffect(() => {
@@ -82,9 +82,7 @@ export default function Navbar({ isAuthenticated }: NavbarProps) {
       return null;
     }
   };
- 
 
-  console.log(currentUser)
   return (
     <nav className="bg-gradient-to-b from-[#283E51] to-[#4B79A1] dark:bg-[#172a41] text-white py-2 px-10 flex justify-between items-center relative z-50">
       {/* Logo */}
@@ -127,12 +125,14 @@ export default function Navbar({ isAuthenticated }: NavbarProps) {
         </li>
 
         <li className="relative group">
-          <Link
-            to="/novedades"
-            className="hover:text-yellow-300 block pb-2 transform transition-all duration-300 hover:scale-110 origin-bottom"
-          >
-            Novedades
-          </Link>
+          {isAuthenticated &&
+            <Link
+              to="/novedades"
+              className="hover:text-yellow-300 block pb-2 transform transition-all duration-300 hover:scale-110 origin-bottom"
+            >
+              Novedades
+            </Link>
+          }
         </li>
       </ul>
 
@@ -169,6 +169,7 @@ export default function Navbar({ isAuthenticated }: NavbarProps) {
         {/* Menú usuario */}
         <div className="relative">
           <button
+            ref={userButtonRef}
             className="hover:text-yellow-300 transition"
             onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
           >
@@ -184,37 +185,55 @@ export default function Navbar({ isAuthenticated }: NavbarProps) {
           </button>
 
           {isUserMenuOpen && (
-            <div className="absolute right-0 top-10 bg-white bg-opacity-50 backdrop-blur-lg text-black shadow-md rounded-lg w-32 z-50">
+            <div
+              ref={userMenuRef}
+              className="absolute right-0 top-12 backdrop-blur-lg text-black shadow-lg rounded-lg w-48 z-50 max-w-xs transition-all duration-300 ease-in-out"
+            >
               {isAuthenticated ? (
                 <>
-                  <div className="px-3 py-1.5 text-base text-right font-semibold">
+                  {/* Nombre de usuario */}
+                  <div className="px-4 py-3 text-lg text-right font-semibold text-gray-800 hover:text-blue-600">
                     {currentUser?.name}
                   </div>
-                  <div className="px-3 py-1.5 text-base text-right font-semibold">
+
+                  {/* Correo electrónico */}
+                  <div className="px-4 py-3 text-base text-right font-medium text-gray-600 truncate">
                     {currentUser?.email}
                   </div>
-                  <div className="px-3 py-1.5 text-base text-right font-semibold">
+
+                  {/* Role */}
+                  <div className="px-4 py-3 text-base text-right font-medium text-gray-600">
                     {currentUser?.role}
                   </div>
-                  <Form method="post" action="/logout" >
-                    <button type="submit"
-                      className="block px-3 py-1.5 text-base hover:bg-yellow-300/60 transition-colors text-right">
+
+                  {/* Divider */}
+                  <div className="border-t border-gray-300 my-2" />
+
+                  {/* Logout Button */}
+                  <Form method="post" action="/logout">
+                    <button
+                      type="submit"
+                      className="block w-full px-4 py-2 text-base text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors duration-200 ease-in-out text-right"
+                    >
                       Cerrar sesión
                     </button>
                   </Form>
                 </>
               ) : (
                 <>
-                  <Link to="/login" className="block px-3 py-1.5 text-base hover:bg-yellow-300/60 transition-colors text-right">
+                  {/* Login and Register Links */}
+                  <Link to="/login" className="block px-4 py-2 text-base hover:bg-yellow-300/60 transition-colors text-right rounded-md">
                     Login
                   </Link>
-                  <Link to="/register" className="block px-3 py-1.5 text-base hover:bg-yellow-300/60 transition-colors text-right">
+                  <Link to="/register" className="block px-4 py-2 text-base hover:bg-yellow-300/60 transition-colors text-right rounded-md">
                     Registrarme
                   </Link>
                 </>
               )}
             </div>
           )}
+
+
         </div>
       </div>
 
