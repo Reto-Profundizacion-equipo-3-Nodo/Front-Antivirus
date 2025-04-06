@@ -75,7 +75,8 @@ import "./tailwind.css";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import { verifyToken } from "./services/authService";
-import WompiButton from "./components/WompiButton";
+import FloatingButtons from "./components/FloatingButtons";
+
 
 /**
  * Tipado del loader
@@ -130,7 +131,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <body>
         <Navbar isAuthenticated={isAuthenticated} />
         {children}
-        <WompiButton />
+        <FloatingButtons/> {/* Botón de Wompi y Whatsapp*/}
         <Footer />
         <ScrollRestoration />
         <Scripts />
