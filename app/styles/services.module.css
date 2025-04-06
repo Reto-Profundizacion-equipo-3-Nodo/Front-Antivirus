@@ -13,7 +13,7 @@
 .background {
   position: relative;
   min-height: 100vh;
-  background: url('/Images/Background.webp') center/cover no-repeat;
+  background: url('/Images/Background.png') center/cover no-repeat;
   display: flex;
   align-items: center;
   justify-content: center;

@@ -19,7 +19,7 @@
   left: 0;
   width: 100%; /* Evita bordes desenfocados */
   height: 110%;
-  background: url('/Images/Background.webp') center/cover no-repeat;
+  background: url('/Images/Background.png') center/cover no-repeat;
   filter: blur(12px);
   transform: scale(1.1); /* Soluciona el problema del borde */
   z-index: 0;
